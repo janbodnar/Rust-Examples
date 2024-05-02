@@ -15,3 +15,21 @@ fn main() {
 }
 ```
 
+## Calculate sum & handle return value
+
+```rust
+use std::vec;
+
+fn do_sum(vals: &[i32]) -> Result<i32, String> {
+    let sum = vals.iter().sum();
+    Ok(sum)
+}
+
+fn main() {
+    let vals = vec![1, 2, 3, 4, 5, 6, 7];
+    match do_sum(&vals) {
+        Ok(sum) => println!("Sum: {sum}"),
+        Err(err) => eprintln!("Error: {err}"),
+    }
+}
+```
