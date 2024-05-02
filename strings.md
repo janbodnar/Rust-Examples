@@ -18,3 +18,5 @@ fn main() {
     println!("{s3}");
 }
 ```
+The line `println!("{s1} {s2} = {}", s1.to_owned() + " " + s2);` cannot go after  
+`let s3 = &mut word;`  b/c there cannot be both mutable and immutable references in Rust.  
