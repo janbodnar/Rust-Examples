@@ -85,5 +85,7 @@ fn main() {
 }
 ```
 
-
+The second `println!` macro tries to borrow `x` immutably again, but `x` is already   
+borrowed mutably by `y`, which is not allowed in Rust because Rust enforces a rule   
+that you can't have mutable and immutable references to the same value in the same scope.  
 
