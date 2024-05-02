@@ -1,5 +1,29 @@
 # Rust-Examples
 
+## Calculate a sum of integers
+
+```rust
+fn main() {
+
+    let vals = (1..=10).collect::<Vec<i32>>();
+    println!("{:?}", vals);
+
+    let sum: i32 = vals.iter().sum();
+    println!("{sum}");
+
+    let mut sum2 = 0;
+
+    for val in vals.iter() {
+        sum2 += val;
+    }
+
+    println!("{sum2}");
+
+    let sum3 = vals.iter().fold(0, |acc, x| acc + x);
+    println!("{sum3}");
+}
+```
+
 
 ## Print string n times 
 
