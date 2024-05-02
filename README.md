@@ -1,6 +1,25 @@
 # Rust-Examples
 
 
+## Print string n times 
+
+```rust
+fn main() {
+    
+    for _ in 1..=5 {
+        println!("falcon");
+    }
+
+    let mut i = 0;
+    while i < 5 {
+        println!("hawk");
+        i += 1;
+    }
+
+    "owl\n".repeat(5).lines().for_each(|word| println!("{word}"));
+}
+```
+
 ## Read env variable
 
 ```rust
