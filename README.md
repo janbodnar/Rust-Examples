@@ -1,5 +1,29 @@
 # Rust-Examples
 
+## Tuples 
+
+```rust
+fn main() {
+    let c: (i32, i32) = (0, 1);
+
+    println!("{}", c.0);
+    println!("{}", c.1);
+
+    let (mut x, mut y) = (10, 11);
+
+    println!("{x}");
+    println!("{y}");
+
+    println!("--------------");
+
+    (x, y) = (y, x);
+
+    println!("{x}");
+    println!("{y}");
+}
+```
+
+
 ## Calculate a sum of integers
 
 ```rust
