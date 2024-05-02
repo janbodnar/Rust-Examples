@@ -34,6 +34,28 @@ fn main() {
 }
 ```
 
+## Random values 
+
+Shuffling a vector and taking a random sample.  
+
+```rust
+use rand::prelude::IteratorRandom;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
+
+fn main() {
+    let mut rng = thread_rng();
+    let mut words = vec!["sky", "cup", "word", "cloud"];
+
+    words.shuffle(&mut rng);
+    println!("{:?}", words);
+
+    let sample = words.iter().choose_multiple(&mut rng, 2);
+    println!("{:?}", sample);
+}
+```
+
+
 ## Mutable and immutable references in one scope
 
 We cannot directly print the value of `x` and its mutable reference `*y` at  
