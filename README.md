@@ -23,6 +23,16 @@ fn main() {
 }
 ```
 
+```rust
+fn main() {
+
+    let nums = (1, 2, 3, 4, 5);
+    let (x, y, z, _, _) = nums;
+
+    println!("{x} {y} {z}");
+}
+```
+
 
 ## Calculate a sum of integers
 
