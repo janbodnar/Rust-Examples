@@ -33,3 +33,57 @@ fn main() {
     }
 }
 ```
+
+## 
+
+We cannot directly print the value of `x` and its mutable reference `*y` at  
+the same time within the same scope due to the borrow checker's restrictions.    
+
+```rust
+fn main() {
+    let mut x = 10;
+    println!("x has: {x}");
+
+    {
+        let y = &mut x;
+        *y = 20;
+
+        println!("Value through y: {}", *y);
+    }
+
+    println!("x has {x}");
+}
+```
+
+Another option: 
+
+```rust
+fn main() {
+    let mut x = 10;
+    println!("x has: {x}");
+
+    let y = &mut x;
+    *y = 20;
+
+    println!("Value through y: {}", *y); 
+    println!("x has {x}");
+}
+```
+
+This does not compile: 
+
+```rust
+fn main() {
+    let mut x = 10;
+    println!("x has: {x}");
+
+    let y = &mut x;
+    *y = 20;
+
+    println!("x has {x}");
+    println!("Value through y: {}", *y); 
+}
+```
+
+
+
