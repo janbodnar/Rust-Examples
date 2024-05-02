@@ -17,6 +17,8 @@ fn main() {
     }
 
     "owl\n".repeat(5).lines().for_each(|word| println!("{word}"));
+
+    std::iter::repeat("eagle").take(5).for_each(|word| println!("{word}"));
 }
 ```
 
