@@ -1,5 +1,23 @@
 # Control flow
 
+## if/else if/else 
+
+```rust
+use rand::Rng;
+
+fn main() {
+    let mut rng = rand::thread_rng();
+    let n = rng.gen_range(-5..5);
+
+    if n < 0 {
+        println!("negative value");
+    } else if n == 0 {
+        println!("zero");
+    } else {
+        println!("positive value");
+    }
+}
+```
 
 ## The loop keyword
 
