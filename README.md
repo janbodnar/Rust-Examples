@@ -34,7 +34,7 @@ fn main() {
 }
 ```
 
-## 
+## Mutable and immutable references in one scope
 
 We cannot directly print the value of `x` and its mutable reference `*y` at  
 the same time within the same scope due to the borrow checker's restrictions.    
@@ -69,6 +69,10 @@ fn main() {
     println!("x has {x}");
 }
 ```
+Here `x` is first mutably borrowed by `y`, and after the mutable borrow is used, `x` is then   
+immutably borrowed by the last `println!` macro, which is now allowed. This change satisfies   
+Rust's borrowing rules.  
+
 
 This does not compile: 
 
