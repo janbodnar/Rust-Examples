@@ -126,3 +126,38 @@ fn main() {
 }
 ```
 
+## filter function
+
+The filter method applies the filtering function on the vector elements.  
+
+```rust
+fn main() {
+    let vals = vec![-3, -2, 1, 0, -1, 3, 2, 4];
+
+    let res: Vec<i32> = vals.iter().filter(|&e| *e > 0).copied().collect();
+   
+    println!("{vals:?}");
+    println!("{res:?}");
+}
+```
+
+The `iter` method creates an iterator that yields references to the elements of the `vals` vector.  
+In addition, the `filter` method takes a closure that receives a reference to the current element 
+being iterated, so we end up with a reference to a reference to the element.  
+
+The `|&e| *e > 0` closure than uses the *pattern matching* operation to extract a reference, which is    
+later dereferenced in the `*e > 0` expression. The `copied` function then copies the values so that  
+end up with a `Vec<i32>`.  
+
+Other options are:  
+
+`let res: Vec<i32> = vals.iter().copied().filter(|&e| e > 0).collect();`
+
+Here we first call `copied` and we then deal with only single references.  
+
+`let res: Vec<i32> = vals.iter().filter(|&&e| e > 0).copied().collect();`
+
+Here we extract the value from `e` using `&&e` pattern match.  
+
+
+
