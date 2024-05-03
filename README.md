@@ -1,5 +1,18 @@
 # Rust-Examples
 
+## Upper and lower bounds
+
+```rust
+fn main() {
+    let x: i32 = 32;
+
+    println!("{x}");
+
+    println!("{}", i32::MAX);
+    println!("{}", i32::MIN);
+}
+```
+
 ## Tuples 
 
 ```rust
