@@ -142,7 +142,7 @@ fn main() {
 ```
 
 The `iter` method creates an iterator that yields references to the elements of the `vals` vector.  
-In addition, the `filter` method takes a closure that receives a reference to the current element 
+In addition, the `filter` method takes a closure that receives a reference to the current element  
 being iterated, so we end up with a reference to a reference to the element.  
 
 The `|&e| *e > 0` closure than uses the *pattern matching* operation to extract a reference, which is    
@@ -158,6 +158,19 @@ Here we first call `copied` and we then deal with only single references.
 `let res: Vec<i32> = vals.iter().filter(|&&e| e > 0).copied().collect();`
 
 Here we extract the value from `e` using `&&e` pattern match.  
+
+### Recap:  
+
+The `iter` method on a collection like a vector yields an iterator that produces references to the elements  
+of the collection. The `filter` function then takes a closure that receives each element as a reference from 
+the iterator. If the iterator is already producing references, the closure will receive a double reference  
+(a reference to a reference).  
+
+For example, if you have a vector of integers `Vec<i32>` and you call `iter` on it, the items produced by the  
+iterator are of type `&i32`. When you pass these items to the `filter` closure, the closure receives `&&i32`  
+because it's a reference to the items produced by `iter`, which are themselves references.  
+
+
 
 
 
