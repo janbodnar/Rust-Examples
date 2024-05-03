@@ -14,6 +14,25 @@ fn main() {
 }
 ```
 
+## Numeric notations
+
+```rust
+fn main() {
+    let x = 212;
+    println!("{x}");
+
+    let x = 0x2fe;
+    println!("{x}");
+
+    let x = 0o242;
+    println!("{x}");
+
+    let x = 0b01101110;
+    println!("{x}");
+}
+```
+
+
 ## Upper and lower bounds
 
 ```rust
