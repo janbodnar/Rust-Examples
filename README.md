@@ -1,5 +1,19 @@
 # Rust-Examples
 
+## Underscores in numbers
+
+Underscore characters can be used in number values for readability.  
+
+```rust
+fn main() {
+    let x = 212_125_874;
+    println!("{x}");
+
+    let y = 0b1000_1101;
+    println!("{y}");
+}
+```
+
 ## Upper and lower bounds
 
 ```rust
