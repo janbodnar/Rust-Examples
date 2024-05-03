@@ -2,6 +2,8 @@
 
 ## if/else if/else 
 
+Simple conditions with `if`, `else if` and `else` keywords.  
+
 ```rust
 use rand::Rng;
 
