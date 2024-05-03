@@ -94,6 +94,44 @@ fn main() {
 }
 ```
 
+Iterating over an array.  
+
+```rust
+fn main() {
+    
+    let words = ["sky", "oak", "wine", "bottle", "cop", "cloud"];
+
+    for e in words {
+        println!("{e}");
+    }
+}
+```
+
+Going over a vector and modifying each element.  
+
+```rust
+fn main() {
+    let mut vals: Vec<i32> = vec![1, 2, 3, 4, 5];
+
+    for num in &mut vals {
+        *num *= 2;
+    }
+
+    println!("{vals:?}");
+}
+```
+
+Iterating over a string.  
+
+```rust
+fn main() {
+    let msg = "an old falcon";
+    for e in msg.chars() {
+        println!("{e}");
+    }
+}
+```
+
 ## loop keyword
 
 The `loop` keyword creates an endless loop. To terminate the loop, we use  
