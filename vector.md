@@ -162,7 +162,7 @@ Here we extract the value from `e` using `&&e` pattern match.
 ### Recap:  
 
 The `iter` method on a collection like a vector yields an iterator that produces references to the elements  
-of the collection. The `filter` function then takes a closure that receives each element as a reference from 
+of the collection. The `filter` function then takes a closure that receives each element as a reference from  
 the iterator. If the iterator is already producing references, the closure will receive a double reference  
 (a reference to a reference).  
 
