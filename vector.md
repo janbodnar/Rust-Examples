@@ -2,6 +2,8 @@
 
 A vector is a contiguous growable collection of data.  
 
+## for_each function
+
 ```rust
 fn main() {
     let mut words = Vec::<&str>::new();
@@ -10,5 +12,19 @@ fn main() {
     words.push("cloud");
 
     words.iter().for_each(|word| println!("{word}"));
+}
+```
+
+## for loop
+
+```rust
+fn main() {
+    let words = vec!["rock", "pub", "cloud", "book", "chair", "glass"];
+
+    println!("the collection has {} elements", words.len());
+
+    for word in &words {
+        println!("{word} has {} latin characters", word.len());
+    }
 }
 ```
