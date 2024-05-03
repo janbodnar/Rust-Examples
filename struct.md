@@ -28,6 +28,8 @@ fn main() {
 ## Custom Display implementation
 
 ```rust
+use std::fmt::{Display, Formatter, Result};
+
 struct Person {
     name: String,
     age: i32,
