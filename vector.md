@@ -111,3 +111,18 @@ fn main() {
 }
 ```
 
+## map function
+
+`map` applies the given function to each element of the vector. It returns a modified vector.  
+
+```rust
+fn main() {
+    let vals: Vec<i32> = (1..10).collect();
+    
+    let res: Vec<i32> = vals.iter().map(|e| e * 2).collect();
+
+    println!("{vals:?}");
+    println!("{res:?}");
+}
+```
+
