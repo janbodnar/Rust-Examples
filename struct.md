@@ -24,3 +24,27 @@ fn main() {
     println!("{p:?}");
 }
 ```
+
+## Custom Display implementation
+
+```rust
+struct Person {
+    name: String,
+    age: i32,
+}
+
+impl Display for Person {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "Person {{ name: {}, age: {} }}", self.name, self.age)
+    }
+}
+
+fn main() {
+    let p = Person {
+        name: "John Doe".to_owned(),
+        age: 34,
+    };
+
+    println!("{p}");
+}
+```
