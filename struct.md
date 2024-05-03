@@ -3,6 +3,8 @@
 
 ## Simple
 
+The `#[derive(Debug)]` attribute allows the usage of `:?` operator.  
+
 ```rust
 #[derive(Debug)]
 struct Person {
