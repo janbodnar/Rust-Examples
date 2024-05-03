@@ -46,6 +46,20 @@ fn main() {
 }
 ```
 
+## Length of string
+
+The length of a string can be calculated with a `str::len` function or a `len` member function.   
+
+```rust
+fn main() {
+    let word = "falcon";
+
+    let n1 = word.len();
+    let n2 = str::len(word);
+    println!("{n1} {n2}");
+}
+```
+
 ## Tuples 
 
 ```rust
