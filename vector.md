@@ -32,3 +32,22 @@ fn main() {
     }
 }
 ```
+
+## Vec::from
+
+The `Vec::from` creates a vector from an array. The elements are accessed via  
+index.  
+
+```rust
+fn main() {
+    let words = Vec::from(["rock", "pub", "cloud", "book", "chair", "glass"]);
+
+    let n = words.len();
+
+    let w1 = words[0];
+    println!("{w1}");
+
+    let w2 = words[n-1];
+    println!("{w2}");
+}
+```
