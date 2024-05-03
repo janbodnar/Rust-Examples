@@ -51,3 +51,24 @@ fn main() {
     println!("{w2}");
 }
 ```
+
+## Sort vector in-place
+
+```rust
+fn main() {
+    let mut words = Vec::new();
+
+    words.push("sky");
+    words.push("clou");
+    words.push("cup");
+    words.push("tent");
+    words.push("war");
+    words.push("atom");
+    words.push("bear");
+    words.push("den");
+
+    println!("{words:?}");
+    words.sort();
+    println!("{words:?}");
+}
+```
