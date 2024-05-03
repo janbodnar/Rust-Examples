@@ -67,7 +67,34 @@ fn main() {
 }
 ```
 
-## The loop keyword
+## for loop
+
+
+Calculating a sum of range of integers.  
+
+```rust
+fn main() {
+
+    let mut sum = 0;
+    for e in 1..=10 {
+        sum += e;
+    }
+
+    println!("{sum}");
+}
+```
+
+Doing a task n times.  
+
+```rust
+fn main() {
+    for _ in 1..=5 {
+        println!("falcon");
+    }
+}
+```
+
+## loop keyword
 
 The `loop` keyword creates an endless loop. To terminate the loop, we use  
 the `break` statement.
