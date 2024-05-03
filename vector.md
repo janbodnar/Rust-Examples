@@ -4,6 +4,8 @@ A vector is a contiguous growable collection of data.
 
 ## for_each function
 
+The `for_each` function is used for declarative iteration.  
+
 ```rust
 fn main() {
     let mut words = Vec::<&str>::new();
@@ -16,6 +18,8 @@ fn main() {
 ```
 
 ## for loop
+
+The `for/in` loop is used for classic, procedural iteration.  
 
 ```rust
 fn main() {
