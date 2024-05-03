@@ -59,7 +59,7 @@ fn main() {
     let mut words = Vec::new();
 
     words.push("sky");
-    words.push("clou");
+    words.push("cloud");
     words.push("cup");
     words.push("tent");
     words.push("war");
@@ -82,7 +82,7 @@ fn main() {
     let mut words = Vec::new();
 
     words.push("sky");
-    words.push("clou");
+    words.push("cloud");
     words.push("cup");
     words.push("tent");
     words.push("war");
