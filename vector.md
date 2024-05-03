@@ -72,3 +72,28 @@ fn main() {
     println!("{words:?}");
 }
 ```
+
+## Create a sorted copy
+
+Create a copy with `clone` and then sort it.  
+
+```rust
+fn main() {
+    let mut words = Vec::new();
+
+    words.push("sky");
+    words.push("clou");
+    words.push("cup");
+    words.push("tent");
+    words.push("war");
+    words.push("atom");
+    words.push("bear");
+    words.push("den");
+
+    println!("{words:?}");
+
+    let mut words2 = words.clone();
+    words2.sort();
+    println!("{words2:?}");
+}
+```
