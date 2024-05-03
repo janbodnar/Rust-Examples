@@ -170,7 +170,36 @@ For example, if you have a vector of integers `Vec<i32>` and you call `iter` on 
 iterator are of type `&i32`. When you pass these items to the `filter` closure, the closure receives `&&i32`  
 because it's a reference to the items produced by `iter`, which are themselves references.  
 
+## filter_map 
 
+applies both filter and map operations.  
+
+```rust
+fn main() {
+    let vals = vec![-3, -2, 1, 0, -1, 3, 2, 4];
+
+    let res: Vec<i32> = vals
+        .iter()
+        .filter_map(|&x| {
+            let doubled = x * 2;
+            if doubled > 0 {
+                Some(doubled)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    println!("{res:?}");
+
+    let res: Vec<i32> = vals
+        .iter()
+        .filter_map(|&x| if x > 0 { Some(x * 2) } else { None })
+        .collect();
+
+        println!("{res:?}");
+}
+```
 
 
 
