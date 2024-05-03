@@ -97,3 +97,17 @@ fn main() {
     println!("{words2:?}");
 }
 ```
+
+## Sum of integers
+
+Create a vector from a range of integers and calculate its sum.  
+
+```rust
+fn main() {
+    let vals = (15..35).collect::<Vec<i32>>();
+
+    let sum: i32 = vals.iter().sum();
+    println!("{sum}");
+}
+```
+
