@@ -58,6 +58,17 @@ fn main() {
 }
 ```
 
+## Run external program
+
+```rust
+use std::process::Command;
+
+fn main() {
+    let mut cmd = Command::new("notepad.exe");
+    cmd.spawn().expect("failed to run program");
+}
+```
+
 ## Split a string
 
 ```rust
