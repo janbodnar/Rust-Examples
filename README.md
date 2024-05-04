@@ -34,6 +34,16 @@ fn main() {
 }
 ```
 
+## Range of integers with step
+
+```rust
+fn main() {
+    for val in (1..10).step_by(3) {
+        println!("{val}");
+    }
+}
+```
+
 ## Split a string
 
 ```rust
