@@ -78,6 +78,23 @@ fn main() {
 }
 ```
 
+## Regex 
+
+```rust
+use regex::Regex;
+
+fn main() {
+    let re = Regex::new(r"\s+").unwrap();
+    let data = "an\t\told  falcon\nin the\r\nsky";
+    let parts: Vec<_> = re.split(data).collect();
+
+    assert_eq!(parts, vec!["an", "old", "falcon", "in", "the", "sky"]);
+
+    println!("{parts:?}");
+}
+```
+
+
 ## Numeric notations
 
 ```rust
