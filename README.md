@@ -34,12 +34,26 @@ fn main() {
 }
 ```
 
-## Range of integers with step
+## Ranges
+
+A range of integers with step.  
 
 ```rust
 fn main() {
     for val in (1..10).step_by(3) {
         println!("{val}");
+    }
+}
+```
+
+Letters.  
+
+```rust
+fn main() {
+    let letters = 'a'..='z';
+
+    for e in letters {
+        println!("{e}");
     }
 }
 ```
