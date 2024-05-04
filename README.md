@@ -23,6 +23,17 @@ fn main() {
 }
 ```
 
+## Join array of strings
+
+```rust
+fn main() {
+    let words = ["an", "old", "falcon"];
+
+    let msg = words.join(" ");
+    println!("{msg}");
+}
+```
+
 ## Split a string
 
 ```rust
