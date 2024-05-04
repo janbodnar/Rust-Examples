@@ -14,6 +14,24 @@ fn main() {
 }
 ```
 
+## Multiple assignment
+
+```rust
+fn main() {
+    let (a, b, c) = (1, 2, 3);
+    println!("{a} {b} {c}");
+}
+```
+
+## Split a string
+
+```rust
+fn main() {
+    let res = "John Doe gardener".split(' ').collect::<Vec<&str>>();
+    res.iter().for_each(|e| println!("{e}"));
+}
+```
+
 ## Numeric notations
 
 ```rust
