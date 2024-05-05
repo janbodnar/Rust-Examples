@@ -151,6 +151,10 @@ end up with a `Vec<i32>`.
 
 Other options are:  
 
+`let res: Vec<i32> = vals.iter().filter(|&e| *e > 0).map(|e| *e).collect();`
+
+Use map to get the values fom references.  
+
 `let res: Vec<i32> = vals.iter().copied().filter(|&e| e > 0).collect();`
 
 Here we first call `copied` and we then deal with only single references.  
