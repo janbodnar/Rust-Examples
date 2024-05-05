@@ -34,6 +34,19 @@ fn main() {
 }
 ```
 
+## Array indexing
+
+```rust
+fn main() {
+    let a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+
+    println!("{:?}", a[0]);
+    println!("{:?}", a[2]);
+    println!("{}", a[0][0]);
+    println!("{}", a[2][1]);
+}
+```
+
 ## Ranges
 
 A range of integers with step.  
