@@ -37,3 +37,19 @@ let mut file = match File::create("foo.txt") {
     Ok(file) => file,
 };
 ```
+
+## fs::read_to_string
+
+Suitable for smaller text (UTF8) files.  
+
+```rust
+use std::fs;
+use std::io;
+
+fn main() -> io::Result<()> {
+    let content = fs::read_to_string("thermopylae.txt")?;
+    println!("{content}");
+    Ok(())
+}
+```
+
