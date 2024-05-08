@@ -53,3 +53,31 @@ fn main() -> io::Result<()> {
 }
 ```
 
+## Read into vector
+
+Read file into `Vec<u8>` vector. Later transform the vector back to string  
+using `String::from_utf8`.   
+
+```rust
+use std::fs::File;
+use std::io::{Error, ErrorKind, Read, Result};
+
+fn main() -> Result<()> {
+    let mut file = File::open("thermopylae.txt")?;
+    let mut content = Vec::new();
+    file.read_to_end(&mut content)?;
+
+    println!("{:?}", content);
+
+    let text = match String::from_utf8(content) {
+        Ok(t) => t,
+        Err(e) => return Err(Error::new(ErrorKind::InvalidData, e)),
+    };
+
+    println!("{text}");
+
+    Ok(())
+}
+```
+
+
