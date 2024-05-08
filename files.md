@@ -104,6 +104,27 @@ fn main() -> Result<()> {
 }
 ```
 
+## Fluent operations
+
+Rust has Fluent API for working with files.  
+
+```rust
+use std::{fs::File, io::Read, io::Result};
+
+fn main() -> Result<()> {
+    let path = "thermopylae.txt";
+
+    let mut buf: [u8; 1024] = [0; 1024];
+
+    let mut file = File::options().read(true).open(path)?;
+    file.read(&mut buf)?;
+
+    println!("{}", String::from_utf8_lossy(&buf));
+
+    Ok(())
+}
+```
+
 ## Buffered reading 
 
 ```rust
