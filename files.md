@@ -21,3 +21,10 @@ Greece.";
     Ok(())
 }
 ```
+
+The `?` operator works like this: 
+
+- If it is a success, it unwraps the `Result` to get the success value inside. The value is then  
+  assigned to the variable file  
+- If the result is an error, the error is not assigned to the variable file. The `Error` is returned by  
+  the function to the caller.  
