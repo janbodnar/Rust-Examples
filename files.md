@@ -80,4 +80,25 @@ fn main() -> Result<()> {
 }
 ```
 
+Alternatively, use `unwrap_or_else` for error handling.  
 
+```rust
+use std::fs::File;
+use std::io::{Read, Result};
+
+fn main() -> Result<()> {
+    let mut file = File::open("thermopylae.txt")?;
+    let mut content: Vec<u8> = Vec::new();
+    file.read_to_end(&mut content)?;
+
+    println!("{:?}", content);
+
+    let text = String::from_utf8(content).unwrap_or_else(|e| {
+        panic!("Invalid UTF-8 sequence: {}", e);
+    });    
+
+    println!("{text}");
+
+    Ok(())
+}
+```
