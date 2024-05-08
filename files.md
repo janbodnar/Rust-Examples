@@ -103,3 +103,22 @@ fn main() -> Result<()> {
     Ok(())
 }
 ```
+
+## Buffered reading 
+
+```rust
+use std::fs::File;
+use std::io::{BufRead, BufReader, Result};
+
+fn main() -> Result<()> {
+    let file = File::open("thermopylae.txt")?;
+    let reader = BufReader::new(file);
+
+    for line in reader.lines() {
+        println!("{}", line?);
+    }
+
+    Ok(())
+}
+```
+
