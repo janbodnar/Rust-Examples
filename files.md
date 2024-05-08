@@ -38,9 +38,10 @@ let mut file = match File::create("foo.txt") {
 };
 ```
 
-## fs::read_to_string
+## Read to string
 
-Suitable for smaller text (UTF8) files.  
+Read to string with `fs::read_to_string`.   
+Suitable for smaller text (UTF8) files.   
 
 ```rust
 use std::fs;
