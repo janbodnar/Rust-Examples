@@ -27,4 +27,13 @@ The `?` operator works like this:
 - If it is a success, it unwraps the `Result` to get the success value inside. The value is then  
   assigned to the variable file  
 - If the result is an error, the error is not assigned to the variable file. The `Error` is returned by  
-  the function to the caller.  
+  the function to the caller.
+
+The `?` is a syntax sugar for: 
+
+```rust
+let mut file = match File::create("foo.txt") {
+    Err(why) => panic!("couldn't create {}: {}", display, why),
+    Ok(file) => file,
+};
+```
