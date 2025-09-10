@@ -250,3 +250,21 @@ fn main() {
 }
 ```
 
+## Tuple structs
+
+```rust
+// Tuple struct definition
+struct Color(u8, u8, u8);
+
+fn main() {
+    // Create an instance of the tuple struct
+    let red = Color(255, 0, 0);
+
+    // Access fields by position
+    println!("Red: ({}, {}, {})", red.0, red.1, red.2);
+
+    // You can use destructuring, too
+    let Color(r, g, b) = red;
+    println!("Destructured: r = {}, g = {}, b = {}", r, g, b);
+}
+```
