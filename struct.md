@@ -27,6 +27,25 @@ fn main() {
 }
 ```
 
+## Field init shorthand
+
+```rust
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+fn main() {
+    let width = 50;
+    let height = 30;
+
+    // Field init shorthand: variables with same name as struct fields
+    let rect = Rectangle { width, height };
+
+    println!("Rectangle: {} x {}", rect.width, rect.height);
+}
+```
+
 ## Deriving debug
 
 The `#[derive(Debug)]` attribute allows the usage of `:?` operator.  
