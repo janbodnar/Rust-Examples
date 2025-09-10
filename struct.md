@@ -189,3 +189,45 @@ fn main() {
 }
 ```
 
+## Serialize/deserialize
+
+```rust
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Book {
+    title: String,
+    author: String,
+    pages: u32,
+}
+
+fn main() {
+    // Create an instance of Book
+    let book = Book {
+        title: "Rust Programming".to_string(),
+        author: "Paul Smith".to_string(),
+        pages: 320,
+    };
+
+    // Serialize the struct to a JSON string with pattern matching
+    let json = match serde_json::to_string(&book) {
+        Ok(json_str) => json_str,
+        Err(e) => {
+            eprintln!("Serialization error: {}", e);
+            return; // Exit early on error
+        }
+    };
+    println!("Serialized Book: {}", json);
+
+    // Deserialize the JSON string back to a struct with pattern matching
+    let deserialized: Book = match serde_json::from_str(&json) {
+        Ok(book) => book,
+        Err(e) => {
+            eprintln!("Deserialization error: {}", e);
+            return; // Exit early on error
+        }
+    };
+    println!("Deserialized Book: {:?}", deserialized);
+}
+```
+
