@@ -3,7 +3,8 @@
 
 ## Simple
 
-Simple example
+A struct is a custom data type that groups related data together.  
+Here's how to define and use a basic struct with named fields.  
 
 ```rust
 struct User {
@@ -27,7 +28,15 @@ fn main() {
 }
 ```
 
+This example demonstrates the basic syntax for defining a struct with two  
+String fields. We create instances by specifying values for each field  
+using struct literal syntax. The dot notation (.) is used to access  
+individual fields of the struct instances.  
+
 ## Field init shorthand
+
+When variable names match struct field names, you can use shorthand  
+syntax to initialize struct fields more concisely.  
 
 ```rust
 struct Rectangle {
@@ -45,6 +54,12 @@ fn main() {
     println!("Rectangle: {} x {}", rect.width, rect.height);
 }
 ```
+
+The field init shorthand syntax allows you to omit the field name when  
+the variable name matches the field name. Instead of writing  
+`Rectangle { width: width, height: height }`, you can simply write  
+`Rectangle { width, height }`. This reduces repetition and makes the  
+code more readable when variable names align with struct fields.  
 
 ## Deriving debug
 
@@ -70,7 +85,16 @@ fn main() {
 }
 ```
 
+The `#[derive(Debug)]` attribute automatically implements the Debug trait  
+for the struct, enabling the use of `{:?}` format specifier in println!  
+macros. This provides a default debug representation that shows the  
+struct name and all field values, which is very useful for debugging  
+and development purposes.  
+
 ## Custom Display implementation
+
+You can implement the Display trait to control how your struct appears  
+when printed with `{}` format specifier instead of `{:?}`.  
 
 ```rust
 use std::fmt::{Display, Formatter, Result};
@@ -96,7 +120,16 @@ fn main() {
 }
 ```
 
+By implementing the Display trait, you define custom formatting for your  
+struct when using `{}` in print statements. The `fmt` method receives a  
+formatter and returns a Result. The `write!` macro is used to format  
+the output string. This gives you full control over how your struct  
+appears to users, creating a more polished and readable output format.  
+
 ## Struct update syntax
+
+The struct update syntax allows you to create a new struct instance  
+based on an existing one, specifying only the fields you want to change.  
 
 ```rust
 #[derive(Clone)]
@@ -122,7 +155,16 @@ fn main() {
 }
 ```
 
+The `..` syntax copies the remaining fields from another struct instance.  
+In this example, `user2` gets a new `username` but inherits the  
+`occupation` from `user1.clone()`. This is particularly useful for  
+structs with many fields where you only want to modify a few. The  
+`Clone` trait is derived to enable the `clone()` method call.  
+
 ## Filtering a struct 
+
+This example demonstrates how to work with collections of structs,  
+filtering them based on specific field values.  
 
 ```rust
 #[derive(Debug)]
@@ -173,7 +215,17 @@ fn main() {
 }
 ```
 
+This example shows how to use iterator methods with structs. We create  
+a vector of User structs, then use `iter()` to iterate over references,  
+`filter()` to select only users with occupation "teacher", and  
+`collect()` to gather the results. The closure `|user|` takes a  
+reference to each User and checks the occupation field. This pattern  
+is common when working with collections of structured data.  
+
 ## Destructuring
+
+Destructuring allows you to extract individual fields from a struct  
+into separate variables, providing convenient access to struct data.  
 
 ```rust
 #[derive(Debug)]
@@ -208,7 +260,16 @@ fn main() {
 }
 ```
 
+Destructuring uses pattern matching to extract struct fields into  
+individual variables. The syntax `let User { name: u_name, ... }`  
+assigns the `name` field to a new variable `u_name`. This technique  
+is useful when you need to work with struct fields as separate  
+variables, and it moves ownership of the fields to the new variables.  
+
 ## Serialize/deserialize
+
+Using the serde crate, you can convert structs to and from various  
+data formats like JSON, providing seamless data interchange capabilities.  
 
 ```rust
 use serde::{Serialize, Deserialize};
@@ -250,7 +311,17 @@ fn main() {
 }
 ```
 
+The `#[derive(Serialize, Deserialize)]` attributes from the serde crate  
+automatically implement serialization and deserialization for the  
+struct. The `serde_json::to_string()` function converts the struct to  
+JSON format, while `serde_json::from_str()` converts JSON back to the  
+struct. Error handling with pattern matching ensures robust operation  
+when dealing with potentially invalid data.  
+
 ## Tuple structs
+
+Tuple structs are structs with unnamed fields, accessed by position  
+rather than name. They're useful for simple data grouping.  
 
 ```rust
 // Tuple struct definition
@@ -269,7 +340,17 @@ fn main() {
 }
 ```
 
+Tuple structs combine the benefits of structs with the simplicity of  
+tuples. Fields are accessed using dot notation with numeric indices  
+(`.0`, `.1`, `.2`). They're particularly useful when the meaning of  
+each position is clear from context, like RGB color values. You can  
+also destructure tuple structs using pattern matching, extracting  
+values into named variables for better readability.  
+
 ## Default traits
+
+The Default trait provides a convenient way to create instances with  
+predefined default values for all fields.  
 
 ```rust
 #[derive(Debug)]
@@ -298,4 +379,11 @@ impl Default for Config {
     }
 }
 ```
+
+By implementing the Default trait, you define sensible default values  
+for your struct. The `default()` method returns a new instance with  
+all fields set to their default values. This is particularly useful  
+for configuration structs or when you want to provide fallback values.  
+You can create a default instance and then modify only the fields you  
+need to change, making your code more flexible and maintainable.  
 
