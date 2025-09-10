@@ -3,6 +3,32 @@
 
 ## Simple
 
+Simple example
+
+```rust
+struct User {
+    username: String,
+    occupation: String,
+}
+
+fn main() {
+    let user1 = User {
+        username: String::from("John Doe"),
+        occupation: String::from("gardener"),
+    };
+
+    let user2 = User {
+        username: String::from("Roger Roe"),
+        occupation: String::from("driver"),
+    };
+
+    println!("User 1: {} is a {}", user1.username, user1.occupation);
+    println!("User 2: {} is a {}", user2.username, user2.occupation);
+}
+```
+
+## Deriving debug
+
 The `#[derive(Debug)]` attribute allows the usage of `:?` operator.  
 
 ```rust
