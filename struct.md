@@ -102,3 +102,54 @@ fn main() {
     println!("User 2: {} is a {}", user2.username, user2.occupation);
 }
 ```
+
+## Filtering a struct 
+
+```rust
+#[derive(Debug)]
+struct User {
+    username: String,
+    occupation: String,
+}
+
+fn main() {
+
+    let users = vec![
+        User {
+            username: String::from("Alice"),
+            occupation: String::from("engineer"),
+        },
+        User {
+            username: String::from("Bob"),
+            occupation: String::from("designer"),
+        },
+        User {
+            username: String::from("Charlie"),
+            occupation: String::from("teacher"),
+        },
+        User {
+            username: String::from("Diana"),
+            occupation: String::from("doctor"),
+        },
+        User {
+            username: String::from("Eve"),
+            occupation: String::from("teacher"),
+        },
+    ];
+
+    let teachers: Vec<&User> = users
+        .iter()
+        .filter(|user| user.occupation == "teacher")
+        .collect();
+
+    println!("Teachers found:");
+
+    for teacher in &teachers {
+        println!("Teacher: {}", teacher.username);
+    }
+
+    println!("Total number of teachers: {}", teachers.len());
+    println!("Total number of users: {}", users.len());
+    println!("users: {:?}", users);
+}
+```
