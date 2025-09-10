@@ -153,3 +153,39 @@ fn main() {
     println!("users: {:?}", users);
 }
 ```
+
+## Destructuring
+
+```rust
+#[derive(Debug)]
+struct User {
+    name: String,
+    email: String,
+    age: u8,
+    occupation: String,
+}
+
+fn main() {
+    let user = User {
+        name: String::from("John Doe"),
+        email: String::from("john.doe@example.com"),
+        age: 30,
+        occupation: String::from("gardener"),
+    };
+
+    println!("{:#?}", user);
+
+    let User {
+        name: u_name,
+        email: u_email,
+        age: u_age,
+        occupation: u_occupation,
+    } = user;
+
+    println!("Name: {}", u_name);
+    println!("Email: {}", u_email);
+    println!("Age: {}", u_age);
+    println!("Occupation: {}", u_occupation);
+}
+```
+
