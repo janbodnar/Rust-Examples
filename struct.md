@@ -76,3 +76,29 @@ fn main() {
     println!("{p}");
 }
 ```
+
+## Struct update syntax
+
+```rust
+#[derive(Clone)]
+struct User {
+    username: String,
+    occupation: String,
+}
+
+fn main() {
+    let user1 = User {
+        username: String::from("John Doe"),
+        occupation: String::from("gardener"),
+    };
+
+    let user2 = User {
+        username: String::from("Jane Smith"),
+        ..user1.clone()
+    };
+
+
+    println!("User 1: {} is a {}", user1.username, user1.occupation);
+    println!("User 2: {} is a {}", user2.username, user2.occupation);
+}
+```
