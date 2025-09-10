@@ -268,3 +268,34 @@ fn main() {
     println!("Destructured: r = {}, g = {}, b = {}", r, g, b);
 }
 ```
+
+## Default traits
+
+```rust
+#[derive(Debug)]
+struct Config {
+    host: String,
+    port: u16,
+}
+
+fn main() {
+    // Use the default() method provided by the Default trait
+    let mut config = Config::default();
+    println!("Default config: {:?}", config);
+
+    // You can override some fields while keeping others default
+    config.host = "127.0.0.1".to_string();
+    config.port = 8081;
+    println!("Updated config: {:?}", config);
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            host: "localhost".to_string(),
+            port: 8080,
+        }
+    }
+}
+```
+
