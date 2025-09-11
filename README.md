@@ -248,6 +248,15 @@ fn main() {
         .for_each(|word| println!("{word}"));
 
     repeat_print!("rock", 5);
+
+    let mut count = 0;
+    loop {
+        if count >= 5 {
+            break;
+        }
+        println!("pigeon");
+        count += 1;
+    }
 }
 ```
 
