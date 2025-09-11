@@ -58,3 +58,92 @@ fn main() {
     println!("Pretty print: {:#?}", map);
 }
 ```
+
+## The format! macro
+
+```rust
+use std::collections::HashMap;
+
+fn main() {
+    // The format! macro is used to create formatted strings in Rust.
+    // It works similarly to the println! macro but returns a String
+    // instead of printing to the console.
+
+    let name = "John Doe";
+    let occupation = "gardener";
+    let number = 42;
+    let price = 12.34;
+    let numbers = vec![1, 2, 3, 4, 5];
+    let map = HashMap::from([
+        ("sk", "Slovakia"),
+        ("cz", "Czechia"),
+        ("pl", "Poland"),
+        ("hu", "Hungary"),
+    ]);
+
+    // Detailed format! macro examples
+    println!("\n=== format! macro examples ===");
+
+    // Basic usage of format!
+    let formatted_string = format!("My name is {name}, I am a {occupation}.");
+    println!("{}", formatted_string);
+
+    // Format with positional arguments
+    let formatted_string = format!("My name is {0}, I am a {1}.", name, occupation);
+    println!("{}", formatted_string);
+
+    // Format with named arguments
+    let formatted_string = format!(
+        "My name is {fullname}, I am a {job}.",
+        fullname = name,
+        job = occupation
+    );
+    println!("{}", formatted_string);
+
+    // Format with number formatting
+    let formatted_string = format!("The price is {:.2}", price);
+    println!("{}", formatted_string);
+
+    // Format with different bases
+    let formatted_string = format!(
+        "Binary: {:b}, Octal: {:o}, Hexadecimal: {:x}",
+        number, number, number
+    );
+    println!("{}", formatted_string);
+
+    // Format with padding and alignment
+    let text = "Hello";
+    let formatted_string = format!("Left aligned: {:<10}!", text);
+    println!("{}", formatted_string);
+
+    let formatted_string = format!("Right aligned: {:>10}!", text);
+    println!("{}", formatted_string);
+
+    let formatted_string = format!("Center aligned: {:^10}!", text);
+    println!("{}", formatted_string);
+
+    // Format with padding character
+    let formatted_string = format!("Padded with zeros: {:0>5}!", 7);
+    println!("{}", formatted_string);
+
+    // Format with debug and pretty print
+    let formatted_string = format!("Debug output: {:?}", numbers);
+    println!("{}", formatted_string);
+
+    let formatted_string = format!("Pretty print: {:#?}", map);
+    println!("{}", formatted_string);
+
+    // Complex formatting example
+    let score = 95.789;
+    let player = "Alice";
+    let level = 3;
+    let formatted_string = format!(
+        "Player: {:<10} | Score: {:>8.1} | Level: {:0>2} | Status: {:?}",
+        player,
+        score,
+        level,
+        if score > 90.0 { "Excellent" } else { "Good" }
+    );
+    println!("{}", formatted_string);
+}
+```
