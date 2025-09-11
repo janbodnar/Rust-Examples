@@ -216,11 +216,21 @@ fn main() {
 ## Print string n times 
 
 ```rust
+macro_rules! repeat_print {
+    ($word:expr, $count:expr) => {
+        for _ in 0..$count {
+            println!("{}", $word);
+        }
+    };
+}
+
 fn main() {
-    
     for _ in 1..=5 {
         println!("falcon");
     }
+
+    let word = "book";
+    (0..5).for_each(|_| println!("{}", word));
 
     let mut i = 0;
     while i < 5 {
@@ -228,9 +238,16 @@ fn main() {
         i += 1;
     }
 
-    "owl\n".repeat(5).lines().for_each(|word| println!("{word}"));
+    "owl\n"
+        .repeat(5)
+        .lines()
+        .for_each(|word| println!("{word}"));
 
-    std::iter::repeat("eagle").take(5).for_each(|word| println!("{word}"));
+    std::iter::repeat("eagle")
+        .take(5)
+        .for_each(|word| println!("{word}"));
+
+    repeat_print!("rock", 5);
 }
 ```
 
