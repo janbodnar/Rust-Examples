@@ -112,6 +112,7 @@ fn main() {
 
 ```rust
 fn main() {
+fn main() {
     let x = 212;
     println!("{x}");
 
@@ -123,6 +124,119 @@ fn main() {
 
     let x = 0b01101110;
     println!("{x}");
+
+    let big = 1_000_000; // same as 1000000
+    let hex = 0xFF_FF_FF; // grouped hex
+    let bin = 0b1010_1010; // grouped binary
+
+    println!("{big}, {hex}, {bin}");
+}
+```
+
+## Number literals
+
+```rust
+// This program demonstrates different number literals in Rust
+// and shows how to work with random numbers using the rand crate
+
+use rand::Rng;
+
+fn main() {
+    // Integer literals in different bases
+    println!("=== Integer Literals ===");
+    
+    // Decimal (base 10) - the default number format
+    let decimal: i32 = 212;
+    println!("Decimal: {}", decimal);
+    
+    // Hexadecimal (base 16) - prefixed with 0x
+    let hex: i32 = 0x2fe;  // 2*16² + 15*16¹ + 14*16⁰ = 512 + 240 + 14 = 766
+    println!("Hexadecimal (0x2fe): {}", hex);
+    
+    // Octal (base 8) - prefixed with 0o
+    let octal: i32 = 0o242;  // 2*8² + 4*8¹ + 2*8⁰ = 128 + 32 + 2 = 162
+    println!("Octal (0o242): {}", octal);
+    
+    // Binary (base 2) - prefixed with 0b
+    let binary: i32 = 0b01101110;  // 64 + 32 + 8 + 4 + 2 = 110
+    println!("Binary (0b01101110): {}", binary);
+    
+    // Type suffixes for explicit typing
+    println!("\n=== Type Suffixes ===");
+    let million = 1_000_000;          // Default integer type (i32)
+    let million_u64 = 1_000_000u64;   // Explicit u64 type
+    let hundred_f32 = 100.0_f32;      // Explicit f32 type
+    
+    println!("Default integer: {}", million);
+    println!("Explicit u64: {}", million_u64);
+    println!("Explicit f32: {}", hundred_f32);
+    
+    // Floating-point literals
+    println!("\n=== Floating-Point Literals ===");
+    let float_default = 3.14;         // Default float type (f64)
+    let float_f32 = 3.14_f32;         // Explicit f32 type
+    let float_scientific = 1.2e3;     // Scientific notation (1.2 * 10³ = 1200)
+    let float_negative_exp = 5.6e-2;  // Negative exponent (5.6 * 10⁻² = 0.056)
+    
+    println!("Default float (f64): {}", float_default);
+    println!("Explicit f32: {}", float_f32);
+    println!("Scientific notation (1.2e3): {}", float_scientific);
+    println!("Negative exponent (5.6e-2): {}", float_negative_exp);
+    
+    // Working with random numbers using the rand crate
+    println!("\n=== Random Numbers ===");
+    let mut rng = rand::rng();
+    
+    // Generate random integers in different ranges
+    let random_u8: u8 = rng.random();
+    let random_range: u32 = rng.random_range(1..=100);
+    let random_float: f64 = rng.random();
+    
+    println!("Random u8: {}", random_u8);
+    println!("Random number between 1-100: {}", random_range);
+    println!("Random float between 0.0-1.0: {:.4}", random_float);
+    
+    // Converting between number types
+    println!("\n=== Type Conversions ===");
+    let small_num: u8 = 100;
+    let big_num: u32 = small_num as u32;  // Safe conversion from smaller to larger type
+    
+    let float_num: f64 = 3.14159;
+    let int_from_float: u32 = float_num as u32;  // Truncates the decimal part
+    
+    println!("u8 {} converted to u32: {}", small_num, big_num);
+    println!("f64 {} converted to u32: {}", float_num, int_from_float);
+    
+    // Mathematical operations with different number types
+    println!("\n=== Mathematical Operations ===");
+    let a: i32 = 42;
+    let b: f64 = 3.14;
+    
+    // To perform operations between different types, we need to convert them
+    let result: f64 = (a as f64) + b;
+    println!("{} (i32) + {} (f64) = {:.2}", a, b, result);
+    
+    // Bitwise operations with binary numbers
+    println!("\n=== Bitwise Operations ===");
+    let x: u8 = 0b1010;  // 10 in decimal
+    let y: u8 = 0b1100;  // 12 in decimal
+    
+    println!("x = {:04b} ({})", x, x);
+    println!("y = {:04b} ({})", y, y);
+    println!("x & y = {:04b} ({})", x & y, x & y);  // AND
+    println!("x | y = {:04b} ({})", x | y, x | y);  // OR
+    println!("x ^ y = {:04b} ({})", x ^ y, x ^ y);  // XOR
+    println!("!x = {:04b} ({})", !x, !x);           // NOT (with padding for display)
+    
+    // Practical example: converting between units
+    println!("\n=== Practical Example: Unit Conversion ===");
+    let temperature_fahrenheit = 100.0_f32;
+    let temperature_celsius = (temperature_fahrenheit - 32.0) * 5.0 / 9.0;
+    println!("{}°F is {:.2}°C", temperature_fahrenheit, temperature_celsius);
+    
+    let distance_miles: f64 = 10.0;
+    let distance_kilometers = distance_miles * 1.60934;
+    println!("{} miles is {:.2} kilometers", distance_miles, distance_kilometers);
 }
 ```
 
@@ -295,15 +409,41 @@ fn main() {
 
 ## Random values 
 
+```
+use rand::Rng;
+
+fn main() {
+    let mut rnd = rand::rng();
+
+    let mut random_vals = vec![];
+
+    for _ in 1..=20 {
+        let n = rnd.random_range(1..=100);
+
+        random_vals.push(n);
+    }
+
+    println!("{:?}", random_vals);
+
+    // pick random word from array
+    let words = ["small", "tall", "lumen", "rock"];
+
+
+    let random_word = words[rnd.random_range(0..words.len())];
+    println!("Random word: {}", random_word);
+    
+}
+```
+
 Shuffling a vector and taking a random sample.  
 
 ```rust
 use rand::prelude::IteratorRandom;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
+use rand::rng;
 
 fn main() {
-    let mut rng = thread_rng();
+    let mut rng = rng();
     let mut words = vec!["sky", "cup", "word", "cloud"];
 
     words.shuffle(&mut rng);
