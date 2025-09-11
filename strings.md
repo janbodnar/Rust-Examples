@@ -25,7 +25,12 @@ The line `println!("{s1} {s2} = {}", s1.to_owned() + " " + s2);` cannot go after
 ```rust
 fn main() {
     if let Ok(n) = "123".parse::<i32>() {
-        println!("Parsed: {}", n);
+        println!("{}", n);
+    }
+
+    let parsed: Result<i32, _> = "123".parse();
+    if let Ok(n) = parsed {
+        println!("{}", n);
     }
 }
 ```
