@@ -59,4 +59,50 @@ and **overflow-safe methods** for arithmetic operations:
 These methods exist for `add`, `sub`, `mul`, `div`, and `neg` where applicable.
 
 
+```rust
+let mut y = i8::MAX; // y = 127
+println!("{y}");
+
+y += 1;              // Attempt to increment beyond i8::MAX
+println!("{y}");
+```
+
+### ⚠️ Behavior depends on build mode:
+
+| Mode        | Behavior on overflow       | Result of `y += 1` |
+|-------------|----------------------------|---------------------|
+| **Debug**   | **Panics at runtime**      | Program crashes     |
+| **Release** | **Wraps around silently**  | `y` becomes `-128`  |
+
+- In **debug mode** (default when using `cargo run`), Rust inserts runtime checks
+  and will **panic** if you exceed bounds.
+- In **release mode** (`cargo run --release`), Rust skips these checks for performance
+  and uses **two’s complement wrapping**.
+
+### Idiomatic ways to handle overflow:
+
+Rust offers explicit methods to control overflow behavior:
+
+```rust
+let x: i8 = 127;
+
+// Wrapping (like release mode)
+let wrap = x.wrapping_add(1); // -128
+
+// Checked (returns Option)
+let checked = x.checked_add(1); // None
+
+// Saturating (clamps to max)
+let saturate = x.saturating_add(1); // 127
+
+// Overflowing (returns tuple)
+let (val, overflowed) = x.overflowing_add(1); // (-128, true)
+```
+
+
+Rust’s strict overflow handling in debug mode is part of its safety guarantees — catching  
+bugs early and making overflow **explicit**, not silent.
+
+
+
 
