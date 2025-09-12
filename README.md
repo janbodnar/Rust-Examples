@@ -73,12 +73,44 @@ fn main() {
 
 ## Run external program
 
+Running notepad.
+
 ```rust
 use std::process::Command;
 
 fn main() {
     let mut cmd = Command::new("notepad.exe");
     cmd.spawn().expect("failed to run program");
+}
+```
+
+The ping command. 
+
+```rust
+// Import necessary modules for executing system commands
+use std::process::Command;
+
+// Main function that pings a website three times using the system's ping command
+fn main() {
+    for seq in 1..=3 {
+        // Execute the ping command with the specified arguments
+        let output = Command::new("ping")
+            .arg("-n") // Number of echo requests to send
+            .arg("1")  // Send only one packet
+            .arg("8.8.8.8") // Target IP address (Google's public DNS)
+            .output() // Capture the command's output
+            .expect("Failed to execute ping");
+
+        // Check the command's exit status to determine success
+        if output.status.success() {
+            println!("Reply from 8.8.8.8: seq={}", seq);
+        } else {
+            println!("Request timed out (seq={})", seq);
+        }
+
+        // Wait for a second before the next ping
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
 }
 ```
 
@@ -323,36 +355,6 @@ fn main() {
 
     let sum3 = vals.iter().fold(0, |acc, x| acc + x);
     println!("{sum3}");
-}
-```
-
-## Run external commands
-
-```rust
-// Import necessary modules for executing system commands
-use std::process::Command;
-
-// Main function that pings a website three times using the system's ping command
-fn main() {
-    for seq in 1..=3 {
-        // Execute the ping command with the specified arguments
-        let output = Command::new("ping")
-            .arg("-n") // Number of echo requests to send
-            .arg("1")  // Send only one packet
-            .arg("8.8.8.8") // Target IP address (Google's public DNS)
-            .output() // Capture the command's output
-            .expect("Failed to execute ping");
-
-        // Check the command's exit status to determine success
-        if output.status.success() {
-            println!("Reply from 8.8.8.8: seq={}", seq);
-        } else {
-            println!("Request timed out (seq={})", seq);
-        }
-
-        // Wait for a second before the next ping
-        std::thread::sleep(std::time::Duration::from_secs(1));
-    }
 }
 ```
 
