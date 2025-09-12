@@ -1,5 +1,36 @@
 # Networking
 
+## QOTD
+
+```rust
+// Import necessary modules for I/O and networking
+use std::io::{Read, Write};
+use std::net::TcpStream;
+
+// Main function that connects to the quote of the day service
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Establish a TCP connection to the server
+    let mut con = TcpStream::connect("djxmmx.net:17")?;
+    
+    // Define an empty message to send
+    let msg = "";
+    // Send the message to the server
+    con.write_all(msg.as_bytes())?;
+    
+    // Prepare a buffer to store the reply
+    let mut reply = [0; 1024];
+    // Read the reply from the connection
+    let n = con.read(&mut reply)?;
+    
+    // Print the reply as a string, handling invalid UTF-8
+    println!("{}", String::from_utf8_lossy(&reply[..n]));
+    
+    // Return success (connection closes automatically)
+    Ok(())
+}
+```
+
+
 ## HEAD request
 
 ```rust
