@@ -316,11 +316,15 @@ timestamps. It's the most straightforward way to copy files in Rust.
 use std::fs;
 
 fn main() -> std::io::Result<()> {
+
     let source = "source.txt";
     let destination = "copy.txt";
     
     let bytes_copied = fs::copy(source, destination)?;
     println!("Copied {} bytes from {} to {}", bytes_copied, source, destination);
+    
+    fs::remove_file("file_to_delete.txt")?;
+    println!("File deleted successfully");
     
     Ok(())
 }
@@ -337,6 +341,7 @@ are on the same filesystem.
 use std::fs;
 
 fn main() -> std::io::Result<()> {
+
     // Rename a file in the same directory
     fs::rename("old_name.txt", "new_name.txt")?;
     println!("File renamed successfully");
@@ -345,6 +350,8 @@ fn main() -> std::io::Result<()> {
     fs::rename("file.txt", "backup/file.txt")?;
     println!("File moved to backup directory");
     
+    fs::rename("old_name.txt", "new_name.txt")?;
+    println!("File renamed or moved successfully");
     Ok(())
 }
 ```
@@ -360,6 +367,7 @@ irreversible.
 use std::fs;
 
 fn main() -> std::io::Result<()> {
+
     // Remove a single file
     fs::remove_file("unwanted_file.txt")?;
     println!("File deleted successfully");
@@ -558,59 +566,13 @@ fn main() -> std::io::Result<()> {
     std::fs::remove_file(&temp_file_path)?;
     println!("Temporary file cleaned up");
     
+    fs::copy("source.txt", "destination.txt")?;
+    println!("File copied successfully");
     Ok(())
 }
 ```
 
-### File permissions (Unix-specific)
-
-Unix-specific permission checking and modification. This example  
-demonstrates how to read and modify file permissions using the  
-std::os::unix module, which provides platform-specific functionality.
-
-```rust
-#[cfg(unix)]
-use std::os::unix::fs::PermissionsExt;
-use std::fs;
-
-fn main() -> std::io::Result<()> {
-    let file_path = "test_permissions.txt";
-    
-    // Create a test file
-    std::fs::write(file_path, "Test content")?;
-    
-    #[cfg(unix)]
-    {
-        // Read current permissions
-        let metadata = fs::metadata(file_path)?;
-        let permissions = metadata.permissions();
-        let mode = permissions.mode();
-        
-        println!("Current permissions: {:o}", mode & 0o777);
-        
-        // Modify permissions (make read-only for owner, no access for others)
-        let mut new_permissions = permissions;
-        new_permissions.set_mode(0o400);
-        fs::set_permissions(file_path, new_permissions)?;
-        
-        // Verify new permissions
-        let updated_metadata = fs::metadata(file_path)?;
-        let updated_mode = updated_metadata.permissions().mode();
-        println!("Updated permissions: {:o}", updated_mode & 0o777);
-    }
-    
-    #[cfg(not(unix))]
-    {
-        println!("File permission modification is Unix-specific");
-        println!("On Windows, use fs::set_permissions with read-only attribute");
-    }
-    
-    // Cleanup
-    fs::remove_file(file_path)?;
-    
-    Ok(())
-}
-```
+   
 
 ### Large file handling with seeking
 
@@ -661,9 +623,6 @@ fn main() -> std::io::Result<()> {
     // Cleanup
     std::fs::remove_file(file_path)?;
     
-    Ok(())
-}
-```
 
 ### File locking
 
@@ -1054,3 +1013,48 @@ fn main() -> std::io::Result<()> {
     
     Ok(())
 }
+
+
+## Changing File Permissions
+
+```rust
+use std::fs;
+use std::os::unix::fs::PermissionsExt;
+
+fn main() -> std::io::Result<()> {
+    let metadata = fs::metadata("example.txt")?;
+    let mut permissions = metadata.permissions();
+    permissions.set_mode(0o644); // rw-r--r--
+    fs::set_permissions("example.txt", permissions)?;
+    println!("Permissions changed successfully");
+    Ok(())
+}
+```
+*Note: The permissions example is for Unix-like systems.*
+
+## Reading a File with Error Handling
+
+```rust
+use std::fs;
+
+fn main() {
+    match fs::read_to_string("maybe_missing.txt") {
+        Ok(content) => println!("File content: {}", content),
+        Err(e) => eprintln!("Error reading file: {}", e),
+    }
+}
+```
+
+## Reading Environment Variables
+
+```rust
+use std::env;
+
+fn main() {
+    if let Ok(path) = env::var("PATH") {
+        println!("PATH: {}", path);
+    } else {
+        println!("PATH variable not set");
+    }
+}
+```
