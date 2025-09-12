@@ -35,6 +35,21 @@ fn main() {
 }
 ```
 
+## Multi-line string
+
+```rust
+fn main() {
+    // Define a multi-line string similar to Java's text block
+    let lyrics = "I cheated myself
+like I knew I would
+I told ya, I was trouble
+you know that I'm no good";
+    
+    // Print the lyrics
+    println!("{}", lyrics);
+}
+```
+
 ## Blank string
 
 ```rust
