@@ -35,6 +35,38 @@ fn main() {
 }
 ```
 
+## String lines
+
+```rust
+fn main() {
+    // Define a multi-line string with words
+    let words = "
+club
+sky
+blue
+cup
+coin
+new
+cent
+owl
+falcon
+brave
+war
+ice
+paint
+water";
+
+    // Split the string into lines and iterate through them
+    for word in words.lines() {
+        // Check if the word length is 3
+        if word.len() == 3 {
+            println!("{}", word);
+        }
+    }
+}
+```
+
+
 ## Multi-line string
 
 ```rust
