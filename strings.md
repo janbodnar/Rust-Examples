@@ -50,6 +50,37 @@ you know that I'm no good";
 }
 ```
 
+## Modifying string
+
+```rust
+fn main() {
+    // Create a mutable string similar to Java's StringBuilder
+    let mut sb = String::from("Misty mountains");
+    println!("{}", sb);
+
+    // Delete the last character (similar to sb.deleteCharAt(sb.length()-1))
+    sb.pop();
+    println!("{}", sb);
+
+    // Append 's'
+    sb.push('s');
+    println!("{}", sb);
+
+    // Insert 'T', 'h', 'e', ' ' at the beginning
+    sb.insert(0, 'T');
+    sb.insert(1, 'h');
+    sb.insert(2, 'e');
+    sb.insert(3, ' ');
+    println!("{}", sb);
+
+    // Set the character at index 4 to 'm'
+    // In Rust, we need to remove the character at index 4 and insert 'm' at that position
+    sb.remove(4);
+    sb.insert(4, 'm');
+    println!("{}", sb);
+}
+```
+
 ## Blank string
 
 ```rust
