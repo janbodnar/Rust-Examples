@@ -1,5 +1,7 @@
 # Integers
 
+
+
 ```rust
 fn main() {
     println!("{:<8} {:>40} {:>40}", "Type", "Min", "Max");
@@ -24,3 +26,37 @@ fn main() {
     println!("{:<8} {:>40} {:>40}", "usize", usize::MIN, usize::MAX);
 }
 ```
+
+##  Rust Integer Types: Bounds & Overflow Methods
+
+Table of all **primitive integer types in Rust**, showing their **bit width**, **value range**,  
+and **overflow-safe methods** for arithmetic operations:
+
+| Type    | Bits | Min Value              | Max Value              | Wrapping | Checked | Saturating | Overflowing |
+|---------|------|------------------------|------------------------|----------|---------|------------|-------------|
+| `i8`    | 8    | -128                   | 127                    | ✅        | ✅       | ✅          | ✅           |
+| `u8`    | 8    | 0                      | 255                    | ✅        | ✅       | ✅          | ✅           |
+| `i16`   | 16   | -32,768                | 32,767                 | ✅        | ✅       | ✅          | ✅           |
+| `u16`   | 16   | 0                      | 65,535                 | ✅        | ✅       | ✅          | ✅           |
+| `i32`   | 32   | -2,147,483,648         | 2,147,483,647          | ✅        | ✅       | ✅          | ✅           |
+| `u32`   | 32   | 0                      | 4,294,967,295          | ✅        | ✅       | ✅          | ✅           |
+| `i64`   | 64   | -9,223,372,036,854,775,808 | 9,223,372,036,854,775,807 | ✅        | ✅       | ✅          | ✅           |
+| `u64`   | 64   | 0                      | 18,446,744,073,709,551,615 | ✅        | ✅       | ✅          | ✅           |
+| `i128`  | 128  | -2⁽¹²⁷⁾                | 2⁽¹²⁷⁾−1               | ✅        | ✅       | ✅          | ✅           |
+| `u128`  | 128  | 0                      | 2⁽¹²⁸⁾−1               | ✅        | ✅       | ✅          | ✅           |
+| `isize`| Arch | varies (e.g. −2³¹ to 2³¹−1 on 32-bit) | varies (e.g. 2³²−1 on 32-bit) | ✅        | ✅       | ✅          | ✅           |
+| `usize`| Arch | 0                      | varies (e.g. 2³²−1 on 32-bit) | ✅        | ✅       | ✅          | ✅           |
+
+---
+
+## Overflow-Safe Methods (on all integer types):
+
+- `.wrapping_add(x)` → wraps around on overflow  
+- `.checked_add(x)` → returns `None` on overflow  
+- `.saturating_add(x)` → clamps to max/min  
+- `.overflowing_add(x)` → returns `(value, overflowed: bool)`
+
+These methods exist for `add`, `sub`, `mul`, `div`, and `neg` where applicable.
+
+
+
