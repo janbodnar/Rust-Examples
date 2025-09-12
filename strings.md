@@ -243,7 +243,7 @@ form what we see.
 2.  `म` (U+092E) - The letter 'ma'. This is the **second** grapheme cluster.
 3.  `स` + `्` + `त` + `े` - This sequence forms the single visual unit "स्ते".
       * `स` (U+0938) is the letter 'sa'.
-      * `्` (U+094D) is a **Virama** (or halant). This special sign "kills" the inherent vowel
+      * `्` (U+094D) is a **Virama** (or halant). This special sign "kills" the inherent vowel  
         of the preceding consonant (`स`) and fuses it with the next consonant (`त`).
       * `त` (U+0924) is the letter 'ta'.
       * `े` (U+0947) is the vowel sign for 'e', which modifies the consonant cluster `स्त`.
