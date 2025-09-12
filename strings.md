@@ -162,3 +162,80 @@ fn main() {
     println!("{}", formatted_string);
 }
 ```
+
+## Counting characters
+
+Thr "नमस्ते" has 3 Grapheme Clusters
+
+The word "नमस्ते" is composed of several Unicode codepoints that combine to  
+form what we see.
+
+1.  `न` (U+0928) - The letter 'na'. This is the **first** grapheme cluster.
+2.  `म` (U+092E) - The letter 'ma'. This is the **second** grapheme cluster.
+3.  `स` + `्` + `त` + `े` - This sequence forms the single visual unit "स्ते".
+      * `स` (U+0938) is the letter 'sa'.
+      * `्` (U+094D) is a **Virama** (or halant). This special sign "kills" the inherent vowel
+        of the preceding consonant (`स`) and fuses it with the next consonant (`त`).
+      * `त` (U+0924) is the letter 'ta'.
+      * `े` (U+0947) is the vowel sign for 'e', which modifies the consonant cluster `स्त`.
+
+Because the Virama links `स` and `त`, the entire sequence `स्ते` is correctly identified as  
+the **third** grapheme cluster. It's a single, indivisible user-perceived character.
+
+
+```rust
+// Import the unicode segmentation functionality
+use unicode_segmentation::UnicodeSegmentation;
+
+// Function to count grapheme clusters in a string
+fn grapheme_length(text: &str) -> usize {
+    text.graphemes(true).count()
+}
+
+fn main() {
+    // Test with ASCII string
+    let text1 = "falcon";
+    let n1 = text1.len();
+    println!("{} has {} bytes", text1, n1);
+    
+    println!("----------------------------");
+    
+    // Test with Cyrillic string
+    let text2 = "вишня";
+    let n2 = text2.len();
+    println!("{} has {} bytes", text2, n2);
+    
+    println!("----------------------------");
+    
+    // Test with emoji string
+    let text3 = "🐺🦊🦝";
+    let n3 = text3.len();
+    println!("{} has {} bytes", text3, n3);
+    
+    let n3_grapheme = grapheme_length(text3);
+    println!("{} has {} grapheme clusters", text3, n3_grapheme);
+    
+    println!("----------------------------");
+    
+    // Test with Devanagari string
+    let text4 = "नमस्ते";
+    let n4 = text4.len();
+    println!("{} has {} bytes", text4, n4);
+    
+    let n4_grapheme = grapheme_length(text4);
+    println!("{} has {} grapheme clusters", text4, n4_grapheme);
+    
+    // Print individual graphemes for debugging
+    println!("Individual graphemes:");
+    for (i, grapheme) in text4.graphemes(true).enumerate() {
+        println!("  {}: '{}'", i, grapheme);
+    }
+    
+    // Print bytes for debugging
+    println!("Bytes:");
+    for (i, byte) in text4.bytes().enumerate() {
+        println!("  {}: {:#04x}", i, byte);
+    }
+}
+```
+
