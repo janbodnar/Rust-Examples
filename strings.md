@@ -22,6 +22,9 @@ The line `println!("{s1} {s2} = {}", s1.to_owned() + " " + s2);` cannot go after
 
 ## Parse string
 
+Convert string representations of numbers to their numeric types using the  
+`parse()` method.  
+
 ```rust
 fn main() {
     if let Ok(n) = "123".parse::<i32>() {
@@ -35,7 +38,17 @@ fn main() {
 }
 ```
 
+The `parse()` method attempts to convert a string slice into a specified  
+numeric type. It returns a `Result<T, ParseIntError>` where `T` is the target  
+type. The first example uses turbofish syntax `::<i32>` to specify the type  
+explicitly. The second example uses type inference by declaring the variable  
+type. Both approaches use pattern matching with `if let Ok()` to handle the  
+potential parsing failure gracefully.  
+
 ## String lines
+
+Split multi-line strings into individual lines and process each line  
+separately using the `lines()` method.  
 
 ```rust
 fn main() {
@@ -66,8 +79,17 @@ water";
 }
 ```
 
+The `lines()` method returns an iterator over the lines of a string, splitting  
+on line terminators. Each line is a string slice that excludes the line  
+terminator. This example demonstrates filtering lines by length, printing only  
+three-character words. The method handles both Unix (`\n`) and Windows  
+(`\r\n`) line endings automatically.  
+
 
 ## Multi-line string
+
+Create multi-line string literals without explicit escape sequences, similar  
+to text blocks in other languages.  
 
 ```rust
 fn main() {
@@ -82,7 +104,15 @@ you know that I'm no good";
 }
 ```
 
+Rust allows multi-line string literals by simply writing the string across  
+multiple lines. Line breaks are preserved as part of the string content.  
+This approach is useful for embedding formatted text, poetry, or configuration  
+data directly in source code without using escape sequences like `\n`.  
+
 ## Modifying string
+
+Demonstrate various methods for modifying mutable strings including adding,  
+removing, and inserting characters.  
 
 ```rust
 fn main() {
@@ -113,7 +143,16 @@ fn main() {
 }
 ```
 
+The `String` type provides methods for in-place modification: `pop()` removes  
+the last character, `push()` appends a character, `insert()` adds a character  
+at a specific position, and `remove()` deletes a character at an index.  
+Unlike string slices (`&str`), `String` is growable and can be modified.  
+These operations require the string to be declared as mutable (`mut`).  
+
 ## Blank string
+
+Check if strings are blank (empty or contain only whitespace characters)  
+using a custom function and string methods.  
 
 ```rust
 // Function to check if a string is blank (empty or whitespace only)
@@ -136,8 +175,17 @@ fn main() {
 }
 ```
 
+The `is_blank()` function combines `trim()` and `is_empty()` to detect strings  
+that are either empty or contain only whitespace. The `trim()` method removes  
+leading and trailing whitespace (spaces, tabs, newlines), then `is_empty()`  
+checks if any content remains. This pattern is useful for validating user  
+input or processing text data that may contain formatting whitespace.  
+
 
 ## String interpolation
+
+Format strings with variables and expressions using Rust's powerful  
+formatting macros and syntax.  
 
 ```rust
 fn main() {
@@ -174,6 +222,13 @@ fn main() {
     println!("Pretty print: {:#?}", map);
 }
 ```
+
+Rust's `println!` macro supports various formatting options: direct variable  
+interpolation with `{variable}`, positional arguments with `{0}`, named  
+parameters, precision control with `{:.2}`, number base conversion with  
+`{:b}` (binary), `{:o}` (octal), `{:x}` (hexadecimal), debug formatting with  
+`{:?}`, and pretty-printing with `{:#?}`. This system provides type-safe  
+string formatting with compile-time checking.  
 
 ## The format! macro
 
