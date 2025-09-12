@@ -15,6 +15,19 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+Explicit Error Handling
+
+```rust
+use std::fs;
+
+fn main() {
+    match fs::read_to_string("maybe_missing.txt") {
+        Ok(content) => println!("File content: {}", content),
+        Err(e) => eprintln!("Error reading file: {}", e),
+    }
+}
+```
+
 
 ### Reading a file line by line
 
@@ -57,6 +70,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
 ### Writing to a file
 
 ```rust
@@ -70,6 +84,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
 ### Appending to a file
 
 ```rust
@@ -86,6 +101,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
 ### Getting file information
 
 ```rust
@@ -117,6 +133,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
 ## File Management
 
 ### Creating a file
@@ -130,6 +147,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
 ### Creating a file while checking if it exists
 
 ```rust
@@ -149,6 +167,21 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
+## Reading Environment Variables
+
+```rust
+use std::env;
+
+fn main() {
+    if let Ok(path) = env::var("PATH") {
+        println!("PATH: {}", path);
+    } else {
+        println!("PATH variable not set");
+    }
+}
+```
+
 ## Directory Operations
 
 ### Creating a directory
@@ -1045,29 +1078,4 @@ fn main() -> std::io::Result<()> {
 ```
 *Note: The permissions example is for Unix-like systems.*
 
-## Reading a File with Error Handling
 
-```rust
-use std::fs;
-
-fn main() {
-    match fs::read_to_string("maybe_missing.txt") {
-        Ok(content) => println!("File content: {}", content),
-        Err(e) => eprintln!("Error reading file: {}", e),
-    }
-}
-```
-
-## Reading Environment Variables
-
-```rust
-use std::env;
-
-fn main() {
-    if let Ok(path) = env::var("PATH") {
-        println!("PATH: {}", path);
-    } else {
-        println!("PATH variable not set");
-    }
-}
-```
