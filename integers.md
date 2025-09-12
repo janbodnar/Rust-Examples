@@ -74,10 +74,10 @@ println!("{y}");
 | **Debug**   | **Panics at runtime**      | Program crashes     |
 | **Release** | **Wraps around silently**  | `y` becomes `-128`  |
 
-- In **debug mode** (default when using `cargo run`), Rust inserts runtime checks
-  and will **panic** if you exceed bounds.
-- In **release mode** (`cargo run --release`), Rust skips these checks for performance
-  and uses **two’s complement wrapping**.
+- In **debug mode** (default when using `cargo run`), Rust inserts runtime checks  
+  and will **panic** if you exceed bounds.  
+- In **release mode** (`cargo run --release`), Rust skips these checks for performance  
+  and uses **two’s complement wrapping**.  
 
 ### Idiomatic ways to handle overflow:
 
