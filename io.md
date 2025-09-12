@@ -90,16 +90,29 @@ fn main() -> std::io::Result<()> {
 
 ```rust
 use std::fs;
+use chrono::{DateTime, Utc};
 
 fn main() -> std::io::Result<()> {
-    let metadata = fs::metadata("example.txt")?;
+    let metadata = fs::metadata("data.txt")?;
     
     println!("File size: {} bytes", metadata.len());
     println!("Is file: {}", metadata.is_file());
     println!("Is directory: {}", metadata.is_dir());
-    println!("Created: {:?}", metadata.created());
-    println!("Modified: {:?}", metadata.modified());
-    println!("Accessed: {:?}", metadata.accessed());
+    
+    if let Ok(created) = metadata.created() {
+        let created_datetime: DateTime<Utc> = created.into();
+        println!("Created: {}", created_datetime.format("%Y-%m-%d %H:%M:%S UTC"));
+    }
+    
+    if let Ok(modified) = metadata.modified() {
+        let modified_datetime: DateTime<Utc> = modified.into();
+        println!("Modified: {}", modified_datetime.format("%Y-%m-%d %H:%M:%S UTC"));
+    }
+    
+    if let Ok(accessed) = metadata.accessed() {
+        let accessed_datetime: DateTime<Utc> = accessed.into();
+        println!("Accessed: {}", accessed_datetime.format("%Y-%m-%d %H:%M:%S UTC"));
+    }
     
     Ok(())
 }
