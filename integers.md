@@ -103,6 +103,21 @@ let (val, overflowed) = x.overflowing_add(1); // (-128, true)
 Rust’s strict overflow handling in debug mode is part of its safety guarantees — catching  
 bugs early and making overflow **explicit**, not silent.
 
+```rust
+fn main() {
+    let y = i8::MAX;
+    println!("{y}");
 
+    let z: i8 = if let Some(v) = y.checked_add(1) {
+        v
+    } else {
+        println!("Overflow occurred");
+        y
+    };
+
+    println!("{y}");
+    println!("{:?}", z);
+}
+```
 
 
