@@ -209,3 +209,107 @@ fn list_dir_recursive(path: &std::path::Path, depth: usize) -> std::io::Result<(
     Ok(())
 }
 ```
+
+## Deleting a File
+
+```rust
+use std::fs;
+
+fn main() -> std::io::Result<()> {
+    fs::remove_file("file_to_delete.txt")?;
+    println!("File deleted successfully");
+    Ok(())
+}
+```
+
+## Renaming or Moving a File
+
+```rust
+use std::fs;
+
+fn main() -> std::io::Result<()> {
+    fs::rename("old_name.txt", "new_name.txt")?;
+    println!("File renamed or moved successfully");
+    Ok(())
+}
+```
+
+## Copying a File
+
+```rust
+use std::fs;
+
+fn main() -> std::io::Result<()> {
+    fs::copy("source.txt", "destination.txt")?;
+    println!("File copied successfully");
+    Ok(())
+}
+```
+
+## Deleting a Directory
+
+```rust
+use std::fs;
+
+fn main() -> std::io::Result<()> {
+    fs::remove_dir("directory_to_delete")?;
+    println!("Directory deleted successfully");
+    Ok(())
+}
+```
+
+## Deleting a Directory Recursively
+
+```rust
+use std::fs;
+
+fn main() -> std::io::Result<()> {
+    fs::remove_dir_all("directory_to_delete")?;
+    println!("Directory and its contents deleted successfully");
+    Ok(())
+}
+```
+
+## Changing File Permissions
+
+```rust
+use std::fs;
+use std::os::unix::fs::PermissionsExt;
+
+fn main() -> std::io::Result<()> {
+    let metadata = fs::metadata("example.txt")?;
+    let mut permissions = metadata.permissions();
+    permissions.set_mode(0o644); // rw-r--r--
+    fs::set_permissions("example.txt", permissions)?;
+    println!("Permissions changed successfully");
+    Ok(())
+}
+```
+*Note: The permissions example is for Unix-like systems.*
+
+## Reading a File with Error Handling
+
+```rust
+use std::fs;
+
+fn main() {
+    match fs::read_to_string("maybe_missing.txt") {
+        Ok(content) => println!("File content: {}", content),
+        Err(e) => eprintln!("Error reading file: {}", e),
+    }
+}
+```
+
+## Reading Environment Variables
+
+```rust
+use std::env;
+
+fn main() {
+    if let Ok(path) = env::var("PATH") {
+        println!("PATH: {}", path);
+    } else {
+        println!("PATH variable not set");
+    }
+}
+```
