@@ -35,6 +35,29 @@ fn main() {
 }
 ```
 
+## Blank string
+
+```rust
+// Function to check if a string is blank (empty or whitespace only)
+fn is_blank(s: &str) -> bool {
+    s.trim().is_empty()
+}
+
+fn main() {
+    // Create a vector of strings similar to the Java List.of()
+    let data = vec!["sky", "\n\n", "  ", "blue", "\t\t", "", "sky"];
+    
+    // Iterate through the vector with indices
+    for (i, e) in data.iter().enumerate() {
+        if is_blank(e) {
+            println!("element with index {} is blank", i);
+        } else {
+            println!("{}", e);
+        }
+    }
+}
+```
+
 
 ## String interpolation
 
