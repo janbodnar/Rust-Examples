@@ -12,7 +12,8 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
-```
+
+
 ## Reading a file line by line
 
 ```rust
