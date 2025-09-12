@@ -1,5 +1,35 @@
 # Networking
 
+## HEAD request
+
+```rust
+// Import necessary modules for I/O and networking
+use std::io::{Read, Write};
+use std::net::TcpStream;
+
+// Main function that performs the HTTP HEAD request
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Establish a TCP connection to the server
+    let mut con = TcpStream::connect("webcode.me:80")?;
+    
+    // Define the HTTP HEAD request string
+    let req = "HEAD / HTTP/1.0\r\n\r\n";
+    // Send the request to the server
+    con.write_all(req.as_bytes())?;
+    
+    // Prepare a vector to store the response
+    let mut res = Vec::new();
+    // Read the entire response from the connection
+    con.read_to_end(&mut res)?;
+    
+    // Print the response as a string, handling invalid UTF-8
+    println!("{}", String::from_utf8_lossy(&res));
+    
+    // Return success
+    Ok(())
+}
+```
+
 
 ## HTTPS request
 
