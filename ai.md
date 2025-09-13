@@ -52,6 +52,90 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
+## Simple chat with API
+
+```rust
+use anyhow::{Context, Result};
+use clap::Parser;
+use reqwest::Client;
+use serde::{Deserialize, Serialize};
+use std::env;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// The prompt to send to the DeepSeek API
+    #[arg(short, long)]
+    prompt: String,
+}
+
+#[derive(Serialize)]
+struct ChatRequest {
+    model: String,
+    messages: Vec<Message>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Message {
+    role: String,
+    content: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct ChatResponse {
+    choices: Vec<Choice>,
+}
+
+#[derive(Deserialize, Debug)]
+struct Choice {
+    message: Message,
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let args = Args::parse();
+
+    let api_key = env::var("DEEPSEEK_API_KEY")
+        .context("DEEPSEEK_API_KEY environment variable not set")?;
+
+    let request = ChatRequest {
+        model: "deepseek-chat".to_string(),
+        messages: vec![Message {
+            role: "user".to_string(),
+            content: args.prompt,
+        }],
+    };
+
+    let client = Client::new();
+    let response = client
+        .post("https://api.deepseek.com/v1/chat/completions")
+        .bearer_auth(api_key)
+        .json(&request)
+        .send()
+        .await
+        .context("Failed to send request to DeepSeek API")?;
+
+    let status = response.status();
+    if !status.is_success() {
+        let error_body = response.text().await.unwrap_or_else(|_| "Unable to read error body".to_string());
+        anyhow::bail!("API request failed with status: {}. Body: {}", status, error_body);
+    }
+
+    let chat_resp: ChatResponse = response
+        .json()
+        .await
+        .context("Failed to deserialize response from DeepSeek API")?;
+
+    if let Some(choice) = chat_resp.choices.first() {
+        println!("{}", choice.message.content);
+    } else {
+        println!("No choices in response");
+    }
+
+    Ok(())
+}
+```
+
 ## Toll call with API
 
 ```rust
