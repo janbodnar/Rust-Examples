@@ -266,4 +266,140 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
+## Multi-turn conversation
+
+```rust
+use anyhow::{Context, Result};
+use clap::Parser;
+use reqwest::Client;
+use serde::{Deserialize, Serialize};
+use std::env;
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// The prompt to send to the DeepSeek API
+    #[arg(short, long)]
+    prompt: String,
+}
+
+#[derive(Serialize)]
+struct ChatRequest {
+    model: String,
+    messages: Vec<Message>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Message {
+    role: String,
+    content: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct ChatResponse {
+    choices: Vec<Choice>,
+}
+
+#[derive(Deserialize, Debug)]
+struct Choice {
+    message: Message,
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let api_key = env::var("DEEPSEEK_API_KEY")
+        .context("DEEPSEEK_API_KEY environment variable not set")?;
+
+    let mut messages = vec![
+        Message {
+            role: "user".to_string(),
+            content: "What is the capital of France?".to_string(),
+        },
+    ];
+
+    let client = Client::new();
+
+    // First turn
+    let first_request = ChatRequest {
+        model: "deepseek-chat".to_string(),
+        messages: messages.clone(),
+    };
+
+    let response = client
+        .post("https://api.deepseek.com/v1/chat/completions")
+        .bearer_auth(&api_key)
+        .json(&first_request)
+        .send()
+        .await
+        .context("Failed to send first request to DeepSeek API")?;
+
+    let status = response.status();
+    if !status.is_success() {
+        let error_body = response.text().await.unwrap_or_else(|_| "Unable to read error body".to_string());
+        anyhow::bail!("First API request failed with status: {}. Body: {}", status, error_body);
+    }
+
+    let first_chat_resp: ChatResponse = response
+        .json()
+        .await
+        .context("Failed to deserialize first response from DeepSeek API")?;
+
+    let first_response = if let Some(choice) = first_chat_resp.choices.first() {
+        choice.message.content.clone()
+    } else {
+        "No response for first question".to_string()
+    };
+
+    // Add AI response to messages
+    messages.push(Message {
+        role: "assistant".to_string(),
+        content: first_response.clone(),
+    });
+
+    println!("Q1: What is the capital of France?");
+    println!("A1: {}", first_response);
+    println!();
+
+    // Second turn - add next user message
+    messages.push(Message {
+        role: "user".to_string(),
+        content: "And of Slovakia?".to_string(),
+    });
+
+    let second_request = ChatRequest {
+        model: "deepseek-chat".to_string(),
+        messages: messages.clone(),
+    };
+
+    let second_response = client
+        .post("https://api.deepseek.com/v1/chat/completions")
+        .bearer_auth(&api_key)
+        .json(&second_request)
+        .send()
+        .await
+        .context("Failed to send second request to DeepSeek API")?;
+
+    let second_status = second_response.status();
+    if !second_status.is_success() {
+        let error_body = second_response.text().await.unwrap_or_else(|_| "Unable to read error body".to_string());
+        anyhow::bail!("Second API request failed with status: {}. Body: {}", second_status, error_body);
+    }
+
+    let second_chat_resp: ChatResponse = second_response
+        .json()
+        .await
+        .context("Failed to deserialize second response from DeepSeek API")?;
+
+    let second_response_content = if let Some(choice) = second_chat_resp.choices.first() {
+        choice.message.content.clone()
+    } else {
+        "No response for second question".to_string()
+    };
+
+    println!("Q2: And of Slovakia?");
+    println!("A2: {}", second_response_content);
+
+    Ok(())
+}
+```
 
