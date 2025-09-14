@@ -71,6 +71,32 @@ fn main() {
 }
 ```
 
+## Safe cube function
+
+```rust
+fn main() {
+    let small_val: i64 = 1_000_000;
+    if let Some(result) = safe_cube(small_val) {
+        println!("Cube of {} is {}", small_val, result);
+    }
+
+    // This value will overflow
+    let large_val: i64 = 3_000_000_000_000_000_000;
+    if let Some(result) = safe_cube(large_val) {
+        println!("Cube of {} is {}", large_val, result);
+    } else {
+        println!("Cubing {} would overflow!", large_val);
+    }
+}
+
+// The function signature now correctly indicates that the operation can fail.
+fn safe_cube(val: i64) -> Option<i128> {
+    // checked_pow returns Some(result) on success and None on overflow.
+    (val as i128).checked_pow(3)
+}
+```
+
+
 ## Run external program
 
 Running notepad.
