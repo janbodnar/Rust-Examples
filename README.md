@@ -78,6 +78,8 @@ fn main() {
     let small_val: i64 = 1_000_000;
     if let Some(result) = safe_cube(small_val) {
         println!("Cube of {} is {}", small_val, result);
+    } else {
+        println!("Cubing {} would overflow!", large_val);
     }
 
     // This value will overflow
