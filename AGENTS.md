@@ -10,5 +10,5 @@ max 80 chars per line, terminated with two spaces.
 ## Examples 
 
 Each example builds on the previous one, progressing from simpler to more complex concepts.  
-Do not number examples such as Example 1: Basic types, use only simple title such as  
+Do not number section titles for examples such as Example 1: Basic types, use only simple title such as  
 Basic types. 
