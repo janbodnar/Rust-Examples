@@ -441,7 +441,7 @@ fn main() {
 
 ## Random values 
 
-```
+```rust
 use rand::Rng;
 
 fn main() {
