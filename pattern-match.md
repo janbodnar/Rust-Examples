@@ -64,7 +64,7 @@ Guard patterns combine pattern matching with boolean conditions. The variable
 `x` binds to the matched value, and the `if` clause provides an additional  
 condition that must be true for the pattern to match.  
 
-## Example 1: Simple Value Matching
+## Simple Value Matching
 
 This example demonstrates basic pattern matching with integer literals and  
 ranges, showing how to match exact values and ranges of values.  
@@ -92,7 +92,7 @@ This example shows exact value matching, multiple value matching with the pipe
 operator, range matching with `..=`, and boolean matching. The range pattern  
 `13..=19` matches any number from 13 to 19 inclusive.  
 
-## Example 2: Option Enum Matching
+## Option Enum Matching
 
 This example demonstrates pattern matching with Rust's `Option` enum, showing  
 how to safely handle potentially absent values.  
@@ -129,7 +129,7 @@ data when present. The `Some(x)` pattern binds the inner value to `x`, while
 `None` handles the absence of a value. Notice how match can be used as an  
 expression to return values, making the code more functional.  
 
-## Example 3: Destructuring Tuples and Structs
+## Destructuring Tuples and Structs
 
 This example shows how to destructure complex data types like tuples and  
 structs to extract their individual components.  
@@ -177,7 +177,7 @@ tuples and structs. The underscore `_` ignores values, while `..` ignores
 multiple values in sequences. Struct patterns can match specific field values  
 or bind field values to variables.  
 
-## Example 4: Advanced Guard Patterns and References
+## Advanced Guard Patterns and References
 
 This example shows more complex guard patterns and how to work with references  
 in pattern matching.  
@@ -220,7 +220,7 @@ This example shows advanced guard patterns with multiple conditions using
 logical operators. It also demonstrates pattern matching with references using  
 the `&` pattern, and shows how to match `Result` types for error handling.  
 
-## Example 5: Nested Pattern Matching with Enums
+## Nested Pattern Matching with Enums
 
 This final example demonstrates the most advanced pattern matching features  
 with custom enums and nested destructuring.  
