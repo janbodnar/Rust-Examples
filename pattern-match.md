@@ -220,6 +220,66 @@ This example shows advanced guard patterns with multiple conditions using
 logical operators. It also demonstrates pattern matching with references using  
 the `&` pattern, and shows how to match `Result` types for error handling.  
 
+## Binding with @ Operator
+
+The `@` operator allows you to bind the matched value to a variable while also  
+applying a pattern. This is useful when you want to both test a pattern and  
+capture the matched value for use in the match arm.  
+
+```rust
+fn main() {
+    // Expanded examples of match with bindings using the '@' operator.
+    // The '@' operator allows you to bind the matched value to a variable
+    // while also applying a pattern.
+
+    // Example 1: Basic binding with ranges
+    let value = 15;
+    match value {
+        // More specific patterns first
+        y @ (10 | 15 | 20) => println!("Specific value: {}", y),
+        x @ 12..=20 => println!("Value in range 12-20: {}", x),
+        other @ _ => println!("Other value: {}", other),
+    }
+
+    // Example 2: Binding with Options
+    let opt_value = Some(42);
+    match opt_value {
+        z @ Some(inner) => println!("Option with value: {} (outer: {:?})", inner, z),
+        None => println!("No value"),
+    }
+
+    // Example 3: Binding with tuples
+    let tuple_value = (3, 8);
+    match tuple_value {
+        (a @ 1..=5, b @ 6..=10) => println!("Tuple: a={}, b={}", a, b),
+        (x, y) => println!("Other tuple: ({}, {})", x, y),
+    }
+
+    // Example 4: Binding with enums
+    #[derive(Debug)]
+    enum Message {
+        Move { x: i32, y: i32 },
+    }
+
+    let msg = Message::Move { x: 10, y: 20 };
+    match msg {
+        Message::Move { x: x_pos @ 0..=100, y: y_pos @ 0..=100 } => {
+            println!("Valid move to ({}, {})", x_pos, y_pos);
+        }
+        Message::Move { x: x_pos, y: y_pos } => {
+            println!("Move to ({}, {}) - out of bounds", x_pos, y_pos);
+        }
+    }
+}
+```
+
+The `@` operator is particularly useful when you need to both match against a  
+pattern and use the matched value. In Example 1, `y @ (10 | 15 | 20)` binds  
+the matched value to `y` while testing if it's one of the specific values. In  
+Example 2, `z @ Some(inner)` captures both the inner value and the entire  
+`Option`. Example 3 shows how to use `@` with range patterns in tuples, and  
+Example 4 demonstrates `@` with struct field patterns and ranges.  
+
 ## Nested Pattern Matching with Enums
 
 This final example demonstrates the most advanced pattern matching features  
