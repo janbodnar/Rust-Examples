@@ -88,7 +88,7 @@ where Rust automatically determines the type. Type inference defaults to
 i32 for integers and f64 for floating-point numbers when the type cannot  
 be determined from context.  
 
-## Example 1: Basic scalar types
+## Basic scalar types
 
 Understanding Rust's fundamental scalar types and their characteristics.  
 
@@ -149,7 +149,7 @@ and characters (char). Each type has specific size and range constraints.
 Integers default to i32, floats to f64. Characters are Unicode scalars  
 stored in 4 bytes, supporting all Unicode characters including emojis.  
 
-## Example 2: Type inference and explicit annotations
+## Type inference and explicit annotations
 
 Exploring how Rust's type inference works and when explicit annotations  
 are needed.  
@@ -217,7 +217,7 @@ annotations are required when types are ambiguous (like parsing strings
 or creating empty collections). The turbofish syntax (::<Type>) provides  
 a way to specify generic type parameters explicitly.  
 
-## Example 3: Arrays and their type signatures
+## Arrays and their type signatures
 
 Understanding fixed-size arrays, their type signatures, and operations.  
 
@@ -292,7 +292,7 @@ stack-allocated and provide bounds checking. Unlike some languages,
 array length is part of the type, so [i32; 3] and [i32; 4] are  
 different types. Arrays support iteration, slicing, and comparison.  
 
-## Example 4: Tuples with mixed types
+## Tuples with mixed types
 
 Exploring tuples as compound types that can hold different types together.  
 
@@ -380,7 +380,7 @@ destructured through pattern matching. The unit type () is a special
 zero-sized tuple. Tuples are useful for returning multiple values from  
 functions and temporary grouping of related data.  
 
-## Example 5: String types (&str vs String)
+## String types (&str vs String)
 
 Understanding the difference between string slices and owned strings.  
 
@@ -482,7 +482,7 @@ string literals in the program binary or slices of owned strings. String
 is heap-allocated and owns its data, allowing for mutation and growth.  
 Use &str for function parameters when you don't need ownership.  
 
-## Example 6: Option and Result types (basic)
+## Option and Result types (basic)
 
 Introducing Rust's approach to handling null values and errors safely.  
 
@@ -602,7 +602,7 @@ methods for transformation and chaining operations. Pattern matching
 ensures all cases are handled, preventing null pointer exceptions and  
 unhandled errors at compile time.  
 
-## Example 7: Custom structs and type definitions
+## Custom structs and type definitions
 
 Creating custom data types using structs and type aliases.  
 
@@ -772,7 +772,7 @@ unit structs have no data. Type aliases create meaningful names for
 existing types, improving code readability. Structs support derivable  
 traits like Debug, Clone, and PartialEq for common functionality.  
 
-## Example 8: Enums with associated data
+## Enums with associated data
 
 Exploring enums as sum types that can hold different variants with data.  
 
@@ -970,7 +970,7 @@ data with each variant. This makes them powerful for modeling states,
 messages, and complex data structures. Pattern matching ensures  
 exhaustive handling of all variants, preventing runtime errors.  
 
-## Example 9: Generic types and type parameters
+## Generic types and type parameters
 
 Understanding how to write flexible, reusable code with generic types.  
 
@@ -1175,7 +1175,7 @@ functions and types are monomorphized at compile time, creating specific
 versions for each type used. Type bounds constrain generic parameters to  
 types that implement specific traits, ensuring type safety.  
 
-## Example 10: Advanced traits and associated types
+## Advanced traits and associated types
 
 Exploring traits as contracts for shared behavior and advanced features.  
 
