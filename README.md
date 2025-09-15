@@ -574,3 +574,37 @@ The second `println!` macro tries to borrow `x` immutably again, but `x` is alre
 borrowed mutably by `y`, which is not allowed in Rust because Rust enforces a rule   
 that you can't have mutable and immutable references to the same value in the same scope.  
 
+
+## Ownership
+
+
+| Syntax / Context                  | Ownership Behavior         | Notes                                                                 |
+|----------------------------------|-----------------------------|-----------------------------------------------------------------------|
+| `let b = a;`                     | **Move**                    | Unless `Copy`, `a` is invalid after this                              |
+| `let b = a.clone();`             | **Clone**                   | Explicit deep copy                                                    |
+| `fn foo(x: T)`                   | **Move**                    | `x` is moved into function                                            |
+| `fn foo(x: &T)`                  | **Borrow**                  | Immutable borrow                                                      |
+| `fn foo(x: &mut T)`              | **Mutable borrow**          | Allows mutation                                                       |
+| `return x;`                      | **Move**                    | Ownership passed to caller                                            |
+| `for x in vec`                   | **Move**                    | `vec` is consumed via `.into_iter()`                                  |
+| `for x in &vec`                  | **Borrow**                  | Iterates over `&T`, keeps `vec` usable                                |
+| `for x in &mut vec`              | **Mutable borrow**          | Allows modifying elements                                             |
+| `for (k, v) in map`              | **Move**                    | `map` is consumed                                                     |
+| `for (k, v) in &map`             | **Borrow**                  | Iterates over `(&K, &V)`                                              |
+| `match Some(x)`                 | **Move**                    | Unless matched by `ref` or `ref mut`                                  |
+| `match Some(ref x)`             | **Borrow**                  | Keeps original usable                                                 |
+| `let x = s.len();`              | **Borrow**                  | `len()` borrows `s`                                                   |
+| `let x = s.into_bytes();`       | **Move**                    | `s` is consumed                                                       |
+| `let closure = move || ...`     | **Move**                    | Captures variables by value                                           |
+| `let closure = || ...`          | **Borrow**                  | Captures by reference                                                 |
+| `struct { field: T }`           | **Move**                    | Accessing `field` moves it unless borrowed                           |
+| `let x = &s` / `let x = &mut s` | **Borrow**                  | Immutable / mutable borrow                                            |
+
+---
+
+### 🧪 Bonus Tips
+- Use `.iter()` / `.iter_mut()` for safe borrowing.
+- Use `.clone()` only when necessary—prefer borrowing for performance.
+- `Copy` types (e.g., integers) don’t move—they’re duplicated silently.
+- Use `ref` in `match` to avoid moving values.
+
