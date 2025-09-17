@@ -907,200 +907,308 @@ Error reading file: No such file or directory (os error 2)
 First word: Some("hello")
 ```
 
-## C# Index from End Operator ^
+## Rust Indexing and Slicing
 
-The `^` operator indicates the element position from the end of a  
-sequence. For a sequence of length n, `^i` points to the element with  
-offset `n - i` from the start of a sequence.
+Rust provides array and slice indexing with the `[]` operator and slicing  
+with range operators.
 
-```csharp
-string[] words = {"sky", "blue", "den", "cloud", "forest"};
+### Basic Indexing
 
-Console.WriteLine(words[^1]);
-Console.WriteLine(words[^2]);
-Console.WriteLine(words[^3]);
+```rust
+fn main() {
+    let words = ["sky", "blue", "den", "cloud", "forest"];
+    
+    println!("{}", words[0]);
+    println!("{}", words[1]);
+    println!("{}", words[4]);
+    
+    // Access from end using len()
+    println!("{}", words[words.len() - 1]);
+    println!("{}", words[words.len() - 2]);
+}
 ```
 
-We access elements from the end of the array.
+Unlike some languages, Rust doesn't have a direct "index from end"  
+operator, but you can use `len() - n` to access elements from the end.
 
 ```
-$ dotnet run
+$ cargo run
+sky
+blue
 forest
 cloud
-den
 ```
 
-## C# Range Operator ..
+### Safe Indexing
 
-The `..` operator specifies the start and end of a range of indices as  
-its operands.
+For safe indexing that doesn't panic, use the `get()` method:
 
-```csharp
-int[] vals = {1, 2, 3, 4, 5, 6, 7};
-
-int[] vals2 = vals[1..4];
-Console.WriteLine(string.Join(",", vals2));
-
-int[] vals3 = vals[..3];
-Console.WriteLine(string.Join(",", vals3));
-
-int[] vals4 = vals[2..];
-Console.WriteLine(string.Join(",", vals4));
-```
-
-We create subarrays using the range operator.
-
-```csharp
-int[] vals2 = vals[1..4];
-```
-
-We get elements with indexes 1, 2, and 3. The end index is exclusive.
-
-```csharp
-int[] vals3 = vals[..3];
-```
-
-This gets elements from the beginning up to index 3 (exclusive).
-
-```csharp
-int[] vals4 = vals[2..];
-```
-
-This gets elements from index 2 to the end of the array.
-
-```
-$ dotnet run
-2,3,4
-1,2,3
-3,4,5,6,7
-```
-
-## C# Type Information Operators
-
-The `typeof` operator obtains the System.Type instance for a type.
-
-```csharp
-int x = 5;
-float y = 3.2f;
-
-Console.WriteLine(x.GetType());
-Console.WriteLine(y.GetType());
-Console.WriteLine(typeof(int));
-Console.WriteLine(typeof(float));
-```
-
-We print type information for integers and floats.
-
-```
-$ dotnet run
-System.Int32
-System.Single
-System.Int32
-System.Single
-```
-
-We can see that the `int` type is an alias for `System.Int32` and the  
-`float` is an alias for the `System.Single` type.
-
-The `is` operator checks if an object is compatible with a given type.
-
-```csharp
-Base _base = new Base();
-Derived derived = new Derived();
-
-Console.WriteLine(_base is Base);
-Console.WriteLine(_base is Object);
-Console.WriteLine(derived is Base);
-Console.WriteLine(_base is Derived);
-
-class Base { }
-class Derived : Base { }
-```
-
-We create two objects from user defined types.
-
-```csharp
-class Base {}
-class Derived : Base {}
-```
-
-We have a `Base` class and a `Derived` class. The `Derived` class  
-inherits from the `Base` class.
-
-```csharp
-Console.WriteLine(_base is Base);
-Console.WriteLine(_base is Object);
-Console.WriteLine(derived is Base);
-Console.WriteLine(_base is Derived);
-```
-
-The first expression is `true` since the `_base` object is an instance  
-of the `Base` type. The second is `true` because each object inherits  
-from the base `Object`. The third is `true` because the `derived`  
-object is a `Derived` type, and the `Derived` type inherits from the  
-`Base` type. The fourth is `false` because the `_base` object is not  
-an instance of the `Derived` type.
-
-```
-$ dotnet run
-True
-True
-True
-False
-```
-
-The `as` operator is used to perform conversions between compatible  
-reference types. When the conversion is not possible, the operator  
-returns null instead of raising an exception.
-
-```csharp
-object[] objects = new object[6];
-objects[0] = new Base();
-objects[1] = new Derived();
-objects[2] = "ZetCode";
-objects[3] = 12;
-objects[4] = 1.4;
-objects[5] = null;
-
-for (int i = 0; i < objects.Length; i++)
-{
-    string? s = objects[i] as string;
-    Console.Write($"{i}:");
-
-    if (s != null)
-    {
-        Console.WriteLine(s);
+```rust
+fn main() {
+    let words = ["sky", "blue", "den", "cloud", "forest"];
+    
+    // Safe indexing returns Option<T>
+    match words.get(10) {
+        Some(word) => println!("Word at index 10: {}", word),
+        None => println!("No word at index 10"),
     }
-    else
-    {
-        Console.WriteLine("not a string");
+    
+    // Using unwrap_or for default values
+    let word = words.get(10).unwrap_or(&"default");
+    println!("Word: {}", word);
+}
+```
+
+```
+$ cargo run
+No word at index 10
+Word: default
+```
+
+## Rust Range Operators
+
+Rust provides two range operators: `..` (exclusive end) and `..=` (inclusive end)  
+for creating ranges and slicing collections.
+
+### Range Types
+
+```rust
+fn main() {
+    let vals = [1, 2, 3, 4, 5, 6, 7];
+    
+    // Slicing with exclusive range [start..end)
+    let slice1 = &vals[1..4];
+    println!("{:?}", slice1);
+    
+    // Slicing from beginning [..end)
+    let slice2 = &vals[..3];
+    println!("{:?}", slice2);
+    
+    // Slicing to end [start..]
+    let slice3 = &vals[2..];
+    println!("{:?}", slice3);
+    
+    // Full slice
+    let slice4 = &vals[..];
+    println!("{:?}", slice4);
+}
+```
+
+We create slices using range operators. Note the use of `&` to create  
+slice references.
+
+```
+$ cargo run
+[2, 3, 4]
+[1, 2, 3]
+[3, 4, 5, 6, 7]
+[1, 2, 3, 4, 5, 6, 7]
+```
+
+### Inclusive Ranges
+
+```rust
+fn main() {
+    let vals = [1, 2, 3, 4, 5, 6, 7];
+    
+    // Inclusive range [start..=end]
+    let slice1 = &vals[1..=4];
+    println!("{:?}", slice1);
+    
+    // Inclusive range from beginning [..=end]
+    let slice2 = &vals[..=2];
+    println!("{:?}", slice2);
+}
+```
+
+The `..=` operator includes the end value in the range.
+
+```
+$ cargo run
+[2, 3, 4, 5]
+[1, 2, 3]
+```
+
+### Ranges for Iteration
+
+```rust
+fn main() {
+    // Exclusive range
+    for i in 1..4 {
+        println!("{}", i);
+    }
+    
+    println!("---");
+    
+    // Inclusive range  
+    for i in 1..=3 {
+        println!("{}", i);
+    }
+    
+    println!("---");
+    
+    // Range with step
+    for i in (0..10).step_by(2) {
+        println!("{}", i);
+    }
+}
+```
+
+Ranges are commonly used in for loops and iterator methods.
+
+```
+$ cargo run
+1
+2
+3
+---
+1
+2
+3
+---
+0
+2
+4
+6
+8
+```
+
+## Rust Type Information and Casting
+
+Rust provides several mechanisms for working with type information and  
+performing type conversions.
+
+### Type Annotations and Inference
+
+```rust
+fn main() {
+    let x = 5i32;      // Explicit type suffix
+    let y = 3.2f64;    // Explicit type suffix
+    
+    // Type annotations
+    let a: i32 = 42;
+    let b: f64 = 3.14;
+    
+    println!("x = {} ({})", x, std::any::type_name::<i32>());
+    println!("y = {} ({})", y, std::any::type_name::<f64>());
+    println!("a = {} ({})", a, std::any::type_name_of_val(&a));
+    println!("b = {} ({})", b, std::any::type_name_of_val(&b));
+}
+```
+
+Rust can often infer types, but explicit annotations are sometimes needed.
+
+```
+$ cargo run
+x = 5 (i32)
+y = 3.2 (f64)
+a = 42 (i32)  
+b = 3.14 (f64)
+```
+
+### Type Casting with as
+
+The `as` operator performs explicit type conversion between compatible types:
+
+```rust
+fn main() {
+    let x = 42i32;
+    let y = x as f64;
+    let z = x as u8;
+    
+    println!("x = {} (i32)", x);
+    println!("y = {} (f64)", y);
+    println!("z = {} (u8)", z);
+    
+    // Casting can truncate
+    let large = 300i32;
+    let truncated = large as u8;
+    println!("300 as u8 = {}", truncated); // Wraps around
+}
+```
+
+```
+$ cargo run
+x = 42 (i32)
+y = 42 (f64)
+z = 42 (u8)
+300 as u8 = 44
+```
+
+### Pattern Matching with Type Checking
+
+Instead of C#'s `is` operator, Rust uses pattern matching:
+
+```rust
+use std::any::Any;
+
+fn describe_value(value: &dyn Any) {
+    if let Some(s) = value.downcast_ref::<String>() {
+        println!("String: {}", s);
+    } else if let Some(i) = value.downcast_ref::<i32>() {
+        println!("Integer: {}", i);
+    } else if let Some(f) = value.downcast_ref::<f64>() {
+        println!("Float: {}", f);
+    } else {
+        println!("Unknown type");
     }
 }
 
-class Base { }
-class Derived : Base { }
+fn main() {
+    let values: Vec<Box<dyn Any>> = vec![
+        Box::new("Hello".to_string()),
+        Box::new(42i32),
+        Box::new(3.14f64),
+        Box::new(true),
+    ];
+    
+    for value in &values {
+        describe_value(value.as_ref());
+    }
+}
 ```
 
-In the above example, we use the `as` operator to perform casting.
-
-```csharp
-string? s = objects[i] as string;
-```
-
-We try to cast various types to the string type. But only once the  
-casting is valid.
+This example demonstrates runtime type checking using trait objects  
+and downcasting.
 
 ```
-$ dotnet run
-0:not a string
-1:not a string
-2:ZetCode
-3:not a string
-4:not a string
-5:not a string
+$ cargo run
+String: Hello
+Integer: 42
+Float: 3.14
+Unknown type
 ```
 
-## C# Operator Precedence
+### Safe Conversions with TryFrom/TryInto
+
+For fallible conversions, use `TryFrom` and `TryInto`:
+
+```rust
+use std::convert::TryInto;
+
+fn main() {
+    let large_number: i32 = 1000;
+    
+    // Safe conversion that can fail
+    let result: Result<u8, _> = large_number.try_into();
+    match result {
+        Ok(small) => println!("Converted: {}", small),
+        Err(e) => println!("Conversion failed: {}", e),
+    }
+    
+    let small_number: i32 = 100;
+    let converted: u8 = small_number.try_into().unwrap();
+    println!("Successfully converted: {}", converted);
+}
+```
+
+```
+$ cargo run
+Conversion failed: out of range integral type conversion attempted
+Successfully converted: 100
+```
+
+## Rust Operator Precedence
 
 The *operator precedence* tells us which operators are evaluated first.  
 The precedence level is necessary to avoid ambiguity in expressions.
@@ -1121,254 +1229,671 @@ than addition operator. So the outcome is 28.
 To change the order of evaluation, we can use parentheses. Expressions  
 inside parentheses are always evaluated first.
 
-The following table shows common C# operators ordered by precedence  
+The following table shows common Rust operators ordered by precedence  
 (highest precedence first):
 
 | Operator(s) | Category | Associativity |
 |-------------|----------|---------------|
-| `x.y` `x?.y` `x?[y]` `f(x)` `a[x]` `x++` `x--` `new` `typeof` `default` `checked` `unchecked` | Primary | Left |
-| `+` `-` `!` `~` `++x` `--x` `(T)x` | Unary | Left |
-| `*` `/` `%` | Multiplicative | Left |
-| `+` `-` | Additive | Left |
-| `<<` `>>` | Shift | Left |
-| `<` `>` `<=` `>=` `is` `as` | Relational and type-testing | Left |
-| `==` `!=` | Equality | Left |
-| `&` | Logical AND | Left |
-| `^` | Logical XOR | Left |
-| `|` | Logical OR | Left |
-| `&&` | Conditional AND | Left |
-| `||` | Conditional OR | Left |
-| `??` | Null Coalescing | Left |
-| `?:` | Ternary | Right |
-| `=` `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` `??=` `=>` | Assignment | Right |
+| Paths | Paths | N/A |
+| Method calls, field access, indexing, function calls | Postfix | Left to right |
+| `?` | Error propagation | Left to right |
+| `-` `!` `*` `&` `&mut` (unary) | Unary prefix | N/A |
+| `as` | Type cast | Left to right |
+| `*` `/` `%` | Multiplicative | Left to right |
+| `+` `-` | Additive | Left to right |
+| `<<` `>>` | Shift | Left to right |
+| `&` | Bitwise AND | Left to right |
+| `^` | Bitwise XOR | Left to right |
+| `|` | Bitwise OR | Left to right |
+| `==` `!=` `<` `>` `<=` `>=` | Comparison | Left to right |
+| `&&` | Logical AND | Left to right |
+| `||` | Logical OR | Left to right |
+| `..` `..=` | Range | N/A |
+| `=` `+=` `-=` `*=` `/=` `%=` etc. | Assignment | Right to left |
 
 Operators on the same row of the table have the same precedence.
 
-```csharp
-Console.WriteLine(3 + 5 * 5);
-Console.WriteLine((3 + 5) * 5);
-
-int a, b, c, d;
-a = b = c = d = 0;
-
-Console.WriteLine($"{a} {b} {c} {d}");
-
-int j = 0;
-j *= 3 + 1;
-
-Console.WriteLine(j);
+```rust
+fn main() {
+    println!("{}", 3 + 5 * 5);
+    println!("{}", (3 + 5) * 5);
+    
+    let mut a = 0;
+    let mut b = 0;
+    let mut c = 0;
+    let mut d = 0;
+    
+    a = b = c = d = 5; // This doesn't work in Rust
+    // Instead use:
+    d = 5;
+    c = d;
+    b = c;
+    a = b;
+    
+    println!("{} {} {} {}", a, b, c, d);
+    
+    let mut j = 0;
+    j *= 3 + 1;
+    
+    println!("{}", j);
+}
 ```
 
-In the example, we have two cases where the associativity rule determines  
-the expression.
-
-```csharp
-int a, b, c, d;
-a = b = c = d = 0;
-```
-
-The assignment operator is right to left associated. If the associativity  
-was left to right, the previous expression would not be possible.
-
-```csharp
-int j = 0;
-j *= 3 + 1;
-```
-
-The compound assignment operators are right to left associated. We might  
-expect the result to be 1. But the actual result is 0. Because of the  
-associativity. The expression on the right is evaluated first and then  
-the compound assignment operator is applied.
+Unlike some languages, Rust doesn't support chained assignment.  
+Assignment operators are right to left associated.
 
 ```
-$ dotnet run
+$ cargo run
 28
 40
-0 0 0 0
+5 5 5 5
 0
 ```
 
-## C# Null-Coalescing Operator
+### Borrowing and Ownership Precedence
 
-The null-coalescing operator `??` returns the value of its left-hand  
-operand if it isn't null; otherwise, it evaluates the right-hand operand  
-and returns its result.
+Rust's borrow checker adds additional rules that affect operator precedence:
 
-```csharp
-string? name = null;
-string? name2 = "Peter";
-
-Console.WriteLine(name ?? "unknown");
-Console.WriteLine(name2 ?? "unknown");
+```rust
+fn main() {
+    let mut x = 5;
+    let y = &mut x;
+    
+    // The * operator has higher precedence than +
+    *y += 1;  // Same as *y = *y + 1;
+    
+    println!("{}", x);
+    
+    let arr = [1, 2, 3, 4];
+    let slice = &arr[1..3];
+    
+    // Method calls have higher precedence than indexing
+    println!("{}", slice.len()); // Methods called first
+    println!("{}", slice[0]);    // Then indexing
+}
 ```
 
-The `??` operator is useful for providing default values for nullable  
+```
+$ cargo run
+6
+2
+2
+```
+
+## Rust Option Unwrapping and Default Values
+
+Rust uses `Option<T>` instead of nullable types, and provides several  
+methods for handling optional values safely.
+
+### unwrap_or and unwrap_or_else
+
+The `unwrap_or` method returns the contained value or a default:
+
+```rust
+fn main() {
+    let name: Option<&str> = None;
+    let name2: Option<&str> = Some("Peter");
+    
+    println!("{}", name.unwrap_or("unknown"));
+    println!("{}", name2.unwrap_or("unknown"));
+}
+```
+
+The `unwrap_or` method is useful for providing default values for optional  
 types.
 
 ```
-$ dotnet run
+$ cargo run
 unknown
 Peter
 ```
 
-## C# Null-Coalescing Assignment Operator
+### or and or_else for Option Chaining
 
-The null-coalescing assignment operator `??=` assigns the value of its  
-right-hand operand to its left-hand operand only if the left-hand  
-operand evaluates to null.
-
-```csharp
-string? message = null;
-string? message2 = "old value";
-
-message ??= "new value";
-message2 ??= "new value";
-
-Console.WriteLine(message);
-Console.WriteLine(message2);
+```rust
+fn main() {
+    let primary: Option<&str> = None;
+    let secondary: Option<&str> = Some("backup");
+    let default = Some("default");
+    
+    let result = primary.or(secondary).or(default);
+    println!("{:?}", result);
+    
+    // Using or_else with a closure
+    let result2 = primary.or_else(|| {
+        println!("Primary was None, trying secondary");
+        secondary
+    });
+    println!("{:?}", result2);
+}
 ```
 
-The `??=` operator doesn't evaluate its right-hand operand if the  
-left-hand operand evaluates to non-null.
-
 ```
-$ dotnet run
-new value
-old value
+$ cargo run
+Some("backup")
+Primary was None, trying secondary
+Some("backup")
 ```
 
-## C# Pattern Matching with is
+## Rust Option Assignment Patterns
 
-The `is` operator supports pattern matching. Pattern matching allows  
-you to test if a value has a certain shape and extract information  
-from it when it does.
+Rust provides several patterns for conditionally assigning values to  
+Option types.
 
-```csharp
-object[] objects = { 1, "hello", 3.14, true, null };
+### get_or_insert and get_or_insert_with
 
-foreach (var obj in objects)
-{
-    var result = obj switch
-    {
-        int i when i > 0 => $"Positive integer: {i}",
-        string s when !string.IsNullOrEmpty(s) => $"Non-empty string: {s}",
-        double d => $"Double: {d}",
-        bool b => $"Boolean: {b}",
-        null => "Null value",
-        _ => "Unknown type"
+```rust
+fn main() {
+    let mut message: Option<String> = None;
+    let mut message2: Option<String> = Some("old value".to_string());
+    
+    // Insert value if None
+    message.get_or_insert("new value".to_string());
+    message2.get_or_insert("new value".to_string());
+    
+    println!("{:?}", message);
+    println!("{:?}", message2);
+}
+```
+
+The `get_or_insert` method only assigns if the Option is None.
+
+```
+$ cargo run
+Some("new value")
+Some("old value")
+```
+
+### Using if let for Conditional Assignment
+
+```rust
+fn main() {
+    let mut value: Option<i32> = None;
+    
+    // Assign only if None
+    if value.is_none() {
+        value = Some(42);
+    }
+    
+    println!("{:?}", value);
+    
+    // More idiomatic approach
+    let mut value2: Option<i32> = Some(10);
+    value2 = value2.or(Some(42));
+    
+    println!("{:?}", value2);
+}
+```
+
+```
+$ cargo run
+Some(42)
+Some(10)
+```
+
+### Pattern Matching for Complex Assignment
+
+```rust
+fn main() {
+    let mut config: Option<String> = None;
+    
+    // Complex conditional assignment
+    config = match config {
+        Some(existing) => Some(existing), // Keep existing value
+        None => Some("default config".to_string()), // Set default
     };
     
-    Console.WriteLine(result);
-}
-```
-
-This example demonstrates pattern matching with switch expressions.
-
-```csharp
-// Traditional is pattern matching
-if (obj is string str && str.Length > 5)
-{
-    Console.WriteLine($"Long string: {str}");
-}
-
-// Type patterns
-if (obj is int number)
-{
-    Console.WriteLine($"Integer: {number}");
+    println!("{:?}", config);
 }
 ```
 
 ```
-$ dotnet run
+$ cargo run
+Some("default config")
+```
+
+## Rust Pattern Matching
+
+Rust has powerful pattern matching with `match` expressions and `if let`  
+statements. Pattern matching allows you to test values against patterns  
+and extract information from them.
+
+### Basic Pattern Matching
+
+```rust
+fn main() {
+    let values: Vec<Box<dyn std::any::Any>> = vec![
+        Box::new(1i32),
+        Box::new("hello".to_string()),
+        Box::new(3.14f64),
+        Box::new(true),
+    ];
+    
+    for (i, value) in values.iter().enumerate() {
+        print!("Value {}: ", i);
+        
+        if let Some(int_val) = value.downcast_ref::<i32>() {
+            println!("Integer: {}", int_val);
+        } else if let Some(string_val) = value.downcast_ref::<String>() {
+            println!("String: {}", string_val);
+        } else if let Some(float_val) = value.downcast_ref::<f64>() {
+            println!("Float: {}", float_val);
+        } else if let Some(bool_val) = value.downcast_ref::<bool>() {
+            println!("Boolean: {}", bool_val);
+        } else {
+            println!("Unknown type");
+        }
+    }
+}
+```
+
+This example demonstrates pattern matching with type checking using  
+trait objects and downcasting.
+
+```
+$ cargo run
+Value 0: Integer: 1
+Value 1: String: hello
+Value 2: Float: 3.14
+Value 3: Boolean: true
+```
+
+### Pattern Matching with Enums
+
+```rust
+#[derive(Debug)]
+enum Value {
+    Integer(i32),
+    Text(String),
+    Float(f64),
+    Boolean(bool),
+    Nothing,
+}
+
+fn describe_value(value: &Value) -> String {
+    match value {
+        Value::Integer(i) if *i > 0 => format!("Positive integer: {}", i),
+        Value::Integer(i) if *i < 0 => format!("Negative integer: {}", i),
+        Value::Integer(_) => "Zero".to_string(),
+        Value::Text(s) if !s.is_empty() => format!("Non-empty string: {}", s),
+        Value::Text(_) => "Empty string".to_string(),
+        Value::Float(f) => format!("Float: {:.2}", f),
+        Value::Boolean(b) => format!("Boolean: {}", b),
+        Value::Nothing => "Nothing".to_string(),
+    }
+}
+
+fn main() {
+    let values = vec![
+        Value::Integer(1),
+        Value::Text("hello".to_string()),
+        Value::Float(3.14159),
+        Value::Boolean(true),
+        Value::Nothing,
+        Value::Integer(-5),
+    ];
+    
+    for value in &values {
+        println!("{}", describe_value(value));
+    }
+}
+```
+
+Pattern matching with guards (conditions) allows for complex matching logic.
+
+```
+$ cargo run
 Positive integer: 1
 Non-empty string: hello
-Double: 3.14
-Boolean: True
-Null value
+Float: 3.14
+Boolean: true
+Nothing
+Negative integer: -5
 ```
 
-## C# Target-Typed new Expressions
+### Destructuring Patterns
 
-Starting with C# 9.0, you can omit the type in a `new` expression when  
-the target type is known:
-
-```csharp
-// Traditional way
-Dictionary<string, int> dict1 = new Dictionary<string, int>();
-
-// Target-typed new (C# 9.0+)
-Dictionary<string, int> dict2 = new();
-
-// Works with fields, properties, and method parameters
-List<string> names = new() { "Alice", "Bob", "Charlie" };
-
-// In method calls
-ProcessList(new() { 1, 2, 3, 4, 5 });
-
-void ProcessList(List<int> numbers)
-{
-    Console.WriteLine($"Processing {numbers.Count} numbers");
+```rust
+fn main() {
+    let tuple = (1, "hello", 3.14);
+    
+    // Destructuring in match
+    match tuple {
+        (1, text, pi) => println!("Found 1, '{}', and {}", text, pi),
+        (x, "world", _) => println!("Found {} and 'world'", x),
+        _ => println!("Something else"),
+    }
+    
+    // Destructuring in if let
+    if let (1, text, _) = tuple {
+        println!("First element is 1, text is '{}'", text);
+    }
+    
+    // Destructuring structs
+    #[derive(Debug)]
+    struct Point { x: i32, y: i32 }
+    
+    let point = Point { x: 0, y: 7 };
+    
+    match point {
+        Point { x: 0, y } => println!("On the y axis at {}", y),
+        Point { x, y: 0 } => println!("On the x axis at {}", x),
+        Point { x, y } => println!("Point at ({}, {})", x, y),
+    }
 }
 ```
 
-This feature reduces redundancy when the type is already specified.
-
 ```
-$ dotnet run
-Processing 5 numbers
-```
-
-## C# Switch Expressions
-
-Switch expressions provide a more concise way to write switch statements  
-(available since C# 8.0):
-
-```csharp
-var day = DateTime.Now.DayOfWeek;
-
-var dayType = day switch
-{
-    DayOfWeek.Monday => "Start of work week",
-    DayOfWeek.Tuesday or DayOfWeek.Wednesday or DayOfWeek.Thursday => "Midweek",
-    DayOfWeek.Friday => "End of work week",
-    DayOfWeek.Saturday or DayOfWeek.Sunday => "Weekend",
-    _ => "Unknown day"
-};
-
-Console.WriteLine(dayType);
-
-// With pattern matching
-static string DescribeNumber(object obj) => obj switch
-{
-    int i when i < 0 => "Negative integer",
-    int i when i == 0 => "Zero",
-    int i when i > 0 => "Positive integer",
-    double d => $"Double: {d:F2}",
-    string s => $"String with length {s.Length}",
-    _ => "Unknown type"
-};
-
-Console.WriteLine(DescribeNumber(42));
-Console.WriteLine(DescribeNumber(-5));
-Console.WriteLine(DescribeNumber(3.14159));
-Console.WriteLine(DescribeNumber("Hello"));
+$ cargo run
+Found 1, 'hello', and 3.14
+First element is 1, text is 'hello'
+On the y axis at 7
 ```
 
-Switch expressions are more concise and functional in style compared to  
-traditional switch statements.
+## Rust Type Inference and Constructor Patterns
+
+Rust has powerful type inference that allows you to omit type annotations  
+in many cases. The compiler can often determine types from context.
+
+### Type Inference
+
+```rust
+use std::collections::HashMap;
+
+fn main() {
+    // Type inferred from usage
+    let mut map = HashMap::new();
+    map.insert("key1", 42);  // Compiler infers HashMap<&str, i32>
+    
+    // Explicit type annotation
+    let mut explicit_map: HashMap<String, i32> = HashMap::new();
+    explicit_map.insert("key2".to_string(), 100);
+    
+    // Type inferred from return type
+    let numbers = vec![1, 2, 3, 4, 5];  // Vec<i32> inferred
+    
+    // Turbofish syntax for explicit type parameters
+    let parsed: i32 = "42".parse().unwrap();
+    let parsed_explicit = "42".parse::<i32>().unwrap();
+    
+    println!("Map: {:?}", map);
+    println!("Explicit map: {:?}", explicit_map);
+    println!("Numbers: {:?}", numbers);
+    println!("Parsed: {}, {}", parsed, parsed_explicit);
+}
+```
+
+Rust's type inference reduces verbosity while maintaining type safety.
 
 ```
-$ dotnet run
+$ cargo run
+Map: {"key1": 42}
+Explicit map: {"key2": 100}
+Numbers: [1, 2, 3, 4, 5]
+Parsed: 42, 42
+```
+
+### Struct and Enum Construction
+
+```rust
+#[derive(Debug)]
+struct Person {
+    name: String,
+    age: u32,
+}
+
+#[derive(Debug)]
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+
+fn create_person(name: &str, age: u32) -> Person {
+    Person {
+        name: name.to_string(),
+        age,  // Shorthand when field name matches variable name
+    }
+}
+
+fn main() {
+    // Direct struct construction
+    let person1 = Person {
+        name: "Alice".to_string(),
+        age: 30,
+    };
+    
+    // Using constructor function
+    let person2 = create_person("Bob", 25);
+    
+    // Enum construction
+    let messages = vec![
+        Message::Quit,
+        Message::Move { x: 10, y: 20 },
+        Message::Write("Hello".to_string()),
+        Message::ChangeColor(255, 0, 0),
+    ];
+    
+    println!("Person 1: {:?}", person1);
+    println!("Person 2: {:?}", person2);
+    println!("Messages: {:?}", messages);
+}
+```
+
+```
+$ cargo run
+Person 1: Person { name: "Alice", age: 30 }
+Person 2: Person { name: "Bob", age: 25 }
+Messages: [Quit, Move { x: 10, y: 20 }, Write("Hello"), ChangeColor(255, 0, 0)]
+```
+
+### Builder Pattern and Method Chaining
+
+```rust
+#[derive(Debug, Default)]
+struct Config {
+    host: String,
+    port: u16,
+    ssl: bool,
+}
+
+impl Config {
+    fn new() -> Self {
+        Self::default()
+    }
+    
+    fn host(mut self, host: &str) -> Self {
+        self.host = host.to_string();
+        self
+    }
+    
+    fn port(mut self, port: u16) -> Self {
+        self.port = port;
+        self
+    }
+    
+    fn ssl(mut self, ssl: bool) -> Self {
+        self.ssl = ssl;
+        self
+    }
+}
+
+fn main() {
+    let config = Config::new()
+        .host("localhost")
+        .port(8080)
+        .ssl(true);
+    
+    println!("Config: {:?}", config);
+}
+```
+
+This pattern provides fluent construction similar to builder patterns  
+in other languages.
+
+```
+$ cargo run
+Config: Config { host: "localhost", port: 8080, ssl: true }
+```
+
+## Rust Match Expressions
+
+Match expressions are Rust's primary control flow construct for pattern  
+matching. They are more powerful and safer than switch statements in  
+many languages.
+
+### Basic Match Expressions
+
+```rust
+use std::time::{SystemTime, UNIX_EPOCH};
+
+#[derive(Debug)]
+enum Day {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
+}
+
+fn main() {
+    let today = Day::Wednesday;
+    
+    let day_type = match today {
+        Day::Monday => "Start of work week",
+        Day::Tuesday | Day::Wednesday | Day::Thursday => "Midweek",
+        Day::Friday => "End of work week",
+        Day::Saturday | Day::Sunday => "Weekend",
+    };
+    
+    println!("{}", day_type);
+    
+    // Match with guards and complex patterns
+    let number = 42;
+    let description = match number {
+        n if n < 0 => "Negative",
+        0 => "Zero",
+        1..=10 => "Small positive",
+        11..=100 => "Medium positive",
+        _ => "Large positive",
+    };
+    
+    println!("Number {} is {}", number, description);
+}
+```
+
+Match expressions must be exhaustive - they must handle all possible values.
+
+```
+$ cargo run
 Midweek
-Positive integer
-Negative integer
-Double: 3.14
-String with length 5
+Number 42 is Medium positive
 ```
 
-This concludes our overview of C# operators. Understanding operator  
-precedence, associativity, and the various types of operators is  
-essential for writing effective C# code. Modern C# continues to evolve  
-with new operator features like pattern matching, null-coalescing  
-assignment, and target-typed new expressions that make code more  
-expressive and safer.
+### Matching with Data Extraction
+
+```rust
+#[derive(Debug)]
+enum Shape {
+    Circle { radius: f64 },
+    Rectangle { width: f64, height: f64 },
+    Triangle { base: f64, height: f64 },
+}
+
+fn calculate_area(shape: &Shape) -> f64 {
+    match shape {
+        Shape::Circle { radius } => std::f64::consts::PI * radius * radius,
+        Shape::Rectangle { width, height } => width * height,
+        Shape::Triangle { base, height } => 0.5 * base * height,
+    }
+}
+
+fn describe_shape(shape: &Shape) -> String {
+    match shape {
+        Shape::Circle { radius } if *radius > 10.0 => {
+            format!("Large circle with radius {:.1}", radius)
+        },
+        Shape::Circle { radius } => {
+            format!("Small circle with radius {:.1}", radius)
+        },
+        Shape::Rectangle { width, height } if width == height => {
+            format!("Square with side {:.1}", width)
+        },
+        Shape::Rectangle { width, height } => {
+            format!("Rectangle {}x{}", width, height)
+        },
+        Shape::Triangle { base, height } => {
+            format!("Triangle with base {:.1} and height {:.1}", base, height)
+        },
+    }
+}
+
+fn main() {
+    let shapes = vec![
+        Shape::Circle { radius: 5.0 },
+        Shape::Rectangle { width: 4.0, height: 4.0 },
+        Shape::Triangle { base: 3.0, height: 6.0 },
+    ];
+    
+    for shape in &shapes {
+        println!("{}: area = {:.2}", describe_shape(shape), calculate_area(shape));
+    }
+}
+```
+
+Match expressions can extract data from complex patterns and apply guards  
+for additional conditions.
+
+```
+$ cargo run
+Small circle with radius 5.0: area = 78.54
+Square with side 4.0: area = 16.00
+Triangle with base 3.0 and height 6.0: area = 9.00
+```
+
+### if let for Simple Matches
+
+For simple matches with only one pattern, `if let` is more concise:
+
+```rust
+fn main() {
+    let maybe_number: Option<i32> = Some(42);
+    
+    // Using match
+    match maybe_number {
+        Some(n) => println!("Got number: {}", n),
+        None => println!("No number"),
+    }
+    
+    // Using if let (more concise for single pattern)
+    if let Some(n) = maybe_number {
+        println!("Got number with if let: {}", n);
+    } else {
+        println!("No number");
+    }
+    
+    // while let for iterating until pattern fails
+    let mut stack = vec![1, 2, 3];
+    while let Some(top) = stack.pop() {
+        println!("Popped: {}", top);
+    }
+}
+```
+
+```
+$ cargo run
+Got number: 42
+Got number with if let: 42
+Popped: 3
+Popped: 2
+Popped: 1
+```
+
+This concludes our overview of Rust operators. Understanding operator  
+precedence, pattern matching, and the various types of operators is  
+essential for writing effective Rust code. Rust's type system, ownership  
+model, and pattern matching make it both safe and expressive, allowing  
+developers to write efficient code with strong compile-time guarantees.
