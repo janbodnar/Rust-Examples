@@ -1,192 +1,212 @@
-# C# Operators
+# Rust Operators
 
-C# operators are special symbols that perform operations on variables and  
+Rust operators are special symbols that perform operations on variables and  
 values. This tutorial covers the various types of operators and expressions  
-in the C# language. Expressions are constructed from operands and operators,  
+in the Rust language. Expressions are constructed from operands and operators,  
 where operators indicate which operations to apply to the operands.
 
-## C# Operator List
+## Rust Operator List
 
-C# provides a rich set of operators organized into several categories:
+Rust provides a comprehensive set of operators organized into several categories:
 
 | Category | Operators |
 |----------|-----------|
-| Sign operators | `+` `-` |
 | Arithmetic | `+` `-` `*` `/` `%` |
-| Logical (boolean and bitwise) | `&` `|` `^` `!` `~` `&&` `||` `true` `false` |
-| String concatenation | `+` |
-| Increment, decrement | `++` `--` |
-| Shift | `<<` `>>` |
-| Relational | `==` `!=` `<` `>` `<=` `>=` |
-| Assignment | `=` `+=` `-=` `*=` `/=` `%=` `&=` `|=` `^=` `??=` `<<=` `>>=` |
-| Member access | `.` `?.` |
-| Indexing | `[]` `?[]` |
-| Cast | `()` |
-| Ternary | `?:` |
-| Delegate concatenation and removal | `+` `-` |
-| Object creation | `new` |
-| Type information | `as` `is` `sizeof` `typeof` |
-| Overflow exception control | `checked` `unchecked` |
-| Indirection and address | `*` `->` `[]` `&` |
-| Lambda | `=>` |
-| Pattern matching | `is` (with patterns) |
-| Range and index | `..` `^` |
-| Null-coalescing | `??` `??=` |
+| Logical (boolean and bitwise) | `&` `|` `^` `!` `~` `&&` `||` |
+| Comparison | `==` `!=` `<` `>` `<=` `>=` |
+| Assignment | `=` `+=` `-=` `*=` `/=` `%=` `&=` `|=` `^=` `<<=` `>>=` |
+| Borrowing and dereferencing | `&` `&mut` `*` |
+| Range | `..` `..=` |
+| Error handling | `?` |
+| Field access | `.` |
+| Indexing | `[]` |
+| Function call | `()` |
+| Type casting | `as` |
+| Pattern matching | `match` expressions |
+| Closure | `|args| expr` |
 
 An operator typically works with one or two operands. Operators that work  
 with only one operand are called *unary operators*. Those that work with  
-two operands are called *binary operators*. There is also one ternary  
-operator `?:`, which works with three operands.
+two operands are called *binary operators*.
 
 Certain operators may be used in different contexts. For example, the `+`  
-operator adds numbers, concatenates strings or delegates, and indicates  
-the sign of a number. We say that the operator is *overloaded*.
+operator adds numbers, concatenates strings, and indicates the sign of a  
+number. We say that the operator is *overloaded*.
 
-## C# Unary Operators
+## Rust Unary Operators
 
-C# unary operators include: `+`, `-`, `++`, `--`, cast operator `()`, and  
-negation `!`.
+Rust unary operators include: `+`, `-`, `*`, `&`, `&mut`, and negation `!`.
 
-### C# Sign Operators
+### Sign Operators
 
 There are two sign operators: `+` and `-`. They are used to indicate or  
 change the sign of a value.
 
-```csharp
-Console.WriteLine(2);
-Console.WriteLine(+2);
-Console.WriteLine(-2);
+```rust
+fn main() {
+    println!("{}", 2);
+    println!("{}", +2);
+    println!("{}", -2);
+}
 ```
 
 The `+` and `-` signs indicate the sign of a value. The plus sign can be  
 used to indicate that we have a positive number. It can be omitted and  
 usually is.
 
-```csharp
-int a = 1;
-Console.WriteLine(-a);
-Console.WriteLine(-(-a));
+```rust
+fn main() {
+    let a = 1;
+    println!("{}", -a);
+    println!("{}", -(-a));
+}
 ```
 
 The minus sign changes the sign of a value.
 
 ```
-$ dotnet run
+$ cargo run
 -1
 1
 ```
 
-### C# Increment and Decrement Operators
+### Reference and Dereference Operators
 
-Incrementing or decrementing a value by one is a common task in programming.  
-C# has two convenient operators for this: `++` and `--`.
+Rust uses `&` to create references (borrowing) and `*` to dereference.  
+These are fundamental to Rust's ownership system.
 
-```csharp
-int x = 6;
-
-x++;
-Console.WriteLine(x);
-
-x--;
-Console.WriteLine(x);
+```rust
+fn main() {
+    let x = 42;
+    let x_ref = &x;        // Create reference
+    let x_val = *x_ref;    // Dereference
+    
+    println!("x = {}", x);
+    println!("x_ref points to {}", x_ref);
+    println!("x_val = {}", x_val);
+}
 ```
 
-We use the increment and decrement operators on a variable.
+Mutable references use `&mut`:
 
-```csharp
-x++;
+```rust
+fn main() {
+    let mut x = 42;
+    let x_mut_ref = &mut x;
+    *x_mut_ref += 10;
+    
+    println!("x = {}", x);
+}
 ```
 
-We use the increment operator. Now the variable equals 7.
-
-```csharp
-x--;
+```
+$ cargo run
+x = 42
+x_ref points to 42
+x_val = 42
+x = 52
 ```
 
-We use the decrement operator. Now the variable equals 7.
+### Type Casting Operator
 
-```
-$ dotnet run
-7
-6
-```
+The `as` operator is used for explicit type casting between compatible types:
 
-### C# Explicit Cast Operator
-
-The explicit cast operator `()` can be used to cast one type to another.  
-Note that this operator works only on certain compatible types.
-
-```csharp
-float val = 3.2f;
-int num = (int) val;
-
-Console.WriteLine(num);
+```rust
+fn main() {
+    let val = 3.2;
+    let num = val as i32;
+    
+    println!("val = {}", val);
+    println!("num = {}", num);
+}
 ```
 
-In the example, we explicitly cast a `float` type to `int`.
+```
+$ cargo run
+val = 3.2
+num = 3
+```
 
 ### Negation Operator
 
-The negation operator `!` reverses the meaning of its operand.
+The negation operator `!` reverses the meaning of its boolean operand:
 
-```csharp
-bool val = true;
-Console.WriteLine(!val);
+```rust
+fn main() {
+    let val = true;
+    println!("val = {}", val);
+    println!("!val = {}", !val);
+}
 ```
 
-In this example, we apply the negation operator to a boolean value.
-
 ```
-$ dotnet run
-False
+$ cargo run
+val = true
+!val = false
 ```
 
-## C# Assignment Operator
+## Rust Assignment Operator
 
-The assignment operator `=` assigns a value to a variable. A variable is  
-a placeholder for a value.
+The assignment operator `=` assigns a value to a variable. In Rust, variables  
+are immutable by default, so they must be declared with `mut` to be modified.
 
-```csharp
-int x = 1;
-Console.WriteLine(x);
+```rust
+fn main() {
+    let x = 1;
+    println!("{}", x);
+}
 ```
 
 We assign number 1 to the `x` variable and print it to the console.
 
-It is possible to assign a value to multiple variables:
+For multiple assignment, Rust uses pattern destructuring:
 
-```csharp
-int a, b, c;
-a = b = c = 5;
-
-Console.WriteLine($"{a} {b} {c}");
+```rust
+fn main() {
+    let (a, b, c) = (5, 6, 7);
+    println!("{} {} {}", a, b, c);
+}
 ```
 
-```
-$ dotnet run
-5 5 5
-```
-
-## C# String Concatenation
-
-The `+` operator is also used to concatenate strings.
-
-```csharp
-string name = "Jane";
-string message = "Hello " + name;
-Console.WriteLine(message);
-```
-
-We concatenate two strings with the `+` operator.
+Unlike some languages, Rust doesn't support chained assignment like  
+`a = b = c = 5`. Instead, use pattern destructuring as shown above.
 
 ```
-$ dotnet run
+$ cargo run
+1
+5 6 7
+```
+
+## Rust String Concatenation
+
+Rust provides several ways to concatenate strings. The `+` operator can be  
+used with String types, and the `format!` macro provides flexible formatting.
+
+```rust
+fn main() {
+    let name = "Jane";
+    let message = format!("Hello {}", name);
+    println!("{}", message);
+    
+    // Using + operator with String
+    let greeting = "Hello".to_string();
+    let full_message = greeting + " " + &name.to_string();
+    println!("{}", full_message);
+}
+```
+
+The `format!` macro is often preferred for string interpolation as it's more  
+readable and flexible than concatenation.
+
+```
+$ cargo run
+Hello Jane
 Hello Jane
 ```
 
-## C# Arithmetic Operators
+## Rust Arithmetic Operators
 
-The following is a table of arithmetic operators in C#:
+The following is a table of arithmetic operators in Rust:
 
 | Symbol | Name |
 |--------|------|
@@ -198,29 +218,31 @@ The following is a table of arithmetic operators in C#:
 
 The following example shows arithmetic operations:
 
-```csharp
-int a = 10;
-int b = 11;
-int c = 12;
-
-int add = a + b + c;
-int sb = c - a;
-int mult = a * b;
-int div = c / 3;
-int rem = c % a;
-
-Console.WriteLine($"Addition: {add}");
-Console.WriteLine($"Subtraction: {sb}");
-Console.WriteLine($"Multiplication: {mult}");
-Console.WriteLine($"Division: {div}");
-Console.WriteLine($"Remainder: {rem}");
+```rust
+fn main() {
+    let a = 10;
+    let b = 11;
+    let c = 12;
+    
+    let add = a + b + c;
+    let sub = c - a;
+    let mult = a * b;
+    let div = c / 3;
+    let rem = c % a;
+    
+    println!("Addition: {}", add);
+    println!("Subtraction: {}", sub);
+    println!("Multiplication: {}", mult);
+    println!("Division: {}", div);
+    println!("Remainder: {}", rem);
+}
 ```
 
 In the preceding example, we use addition, subtraction, multiplication,  
 division, and remainder operations.
 
 ```
-$ dotnet run
+$ cargo run
 Addition: 33
 Subtraction: 2
 Multiplication: 110
@@ -228,37 +250,68 @@ Division: 4
 Remainder: 2
 ```
 
-### C# Division of Integers
+### Integer Division in Rust
 
-Pay special attention to the division of integers. When we divide two  
-integers, the result is an integer. This is integer division.
+In Rust, integer division truncates toward zero, similar to other languages.  
+When we divide two integers, the result is an integer:
 
-```csharp
-int c = 5 / 2;
-Console.WriteLine(c);
+```rust
+fn main() {
+    let c = 5 / 2;
+    println!("{}", c);
+}
 ```
 
-In this example, we divide two integers. The result is an integer. The  
-result is 2, not 2.5 as we might expect.
+The result is 2, not 2.5 as we might expect in floating-point division.
 
-If one of the operands is a double or float, we perform a floating point  
-division:
+For floating-point division, at least one operand must be a float:
 
-```csharp
-double c = 5 / 2.0;
-Console.WriteLine(c);
+```rust
+fn main() {
+    let c = 5.0 / 2.0;
+    println!("{}", c);
+}
 ```
 
 Now the result is 2.5 as expected.
 
 ```
-$ dotnet run
+$ cargo run
+2
 2.5
 ```
 
-## C# Boolean Operators
+### Overflow Behavior
 
-In C#, we have the following logical operators. Boolean operators work  
+Rust has different behavior for overflow in debug vs release builds:
+
+```rust
+fn main() {
+    let x: u8 = 255;
+    // This will panic in debug mode, wrap in release mode
+    // let y = x + 1;
+    
+    // For explicit wrapping behavior:
+    let y = x.wrapping_add(1);
+    println!("Wrapping add: {}", y);
+    
+    // For checked arithmetic:
+    match x.checked_add(1) {
+        Some(result) => println!("Result: {}", result),
+        None => println!("Overflow occurred!"),
+    }
+}
+```
+
+```
+$ cargo run
+Wrapping add: 0
+Overflow occurred!
+```
+
+## Rust Boolean Operators
+
+In Rust, we have the following logical operators. Boolean operators work  
 with boolean values.
 
 | Symbol | Name |
@@ -270,63 +323,69 @@ with boolean values.
 The logical and `&&` operator evaluates to `true` only if both operands  
 are `true`.
 
-```csharp
-bool a = true;
-bool b = true;
-bool c = false;
-bool d = false;
-
-Console.WriteLine(a && b);
-Console.WriteLine(a && c);
-Console.WriteLine(c && d);
+```rust
+fn main() {
+    let a = true;
+    let b = true;
+    let c = false;
+    let d = false;
+    
+    println!("{}", a && b);
+    println!("{}", a && c);
+    println!("{}", c && d);
+}
 ```
 
 Only the first expression evaluates to `true`.
 
 ```
-$ dotnet run
-True
-False
-False
+$ cargo run
+true
+false
+false
 ```
 
 The logical or `||` operator evaluates to `true` if either of the operands  
 is `true`.
 
-```csharp
-bool a = true;
-bool b = true;
-bool c = false;
-bool d = false;
-
-Console.WriteLine(a || b);
-Console.WriteLine(a || c);
-Console.WriteLine(c || d);
+```rust
+fn main() {
+    let a = true;
+    let b = true;
+    let c = false;
+    let d = false;
+    
+    println!("{}", a || b);
+    println!("{}", a || c);
+    println!("{}", c || d);
+}
 ```
 
 The first two expressions evaluate to `true`.
 
 ```
-$ dotnet run
-True
-True
-False
+$ cargo run
+true
+true
+false
 ```
 
 The negation operator `!` makes `true` `false` and `false` `true`.
 
-```csharp
-bool a = true;
-bool b = false;
-
-Console.WriteLine(!a);
-Console.WriteLine(!b);
+```rust
+fn main() {
+    let a = true;
+    let b = false;
+    
+    println!("{}", !a);
+    println!("{}", !b);
+}
 ```
 
 ```
-$ dotnet run
-False
-True
+$ cargo run
+false
+true
 ```
 
 The `&&` and `||` operators are short-circuited. Short-circuited means  
@@ -334,28 +393,29 @@ that the second operand is not evaluated if the first operand suffices
 to determine the expression. This behavior can improve performance and  
 prevent potential errors.
 
-```csharp
-Console.WriteLine(true || GetValue());
-Console.WriteLine(false && GetValue());
+```rust
+fn main() {
+    println!("{}", true || get_value());
+    println!("{}", false && get_value());
+}
 
-bool GetValue()
-{
-    Console.WriteLine("GetValue() method called");
-    return true;
+fn get_value() -> bool {
+    println!("get_value() function called");
+    true
 }
 ```
 
-In this example, the `GetValue()` method is never called.
+In this example, the `get_value()` function is never called.
 
 ```
-$ dotnet run
-True
-False
+$ cargo run
+true
+false
 ```
 
-## C# Relational Operators
+## Rust Comparison Operators
 
-Relational operators are used to compare values. These operators always  
+Comparison operators are used to compare values. These operators always  
 result in boolean values.
 
 | Symbol | Name |
@@ -367,17 +427,39 @@ result in boolean values.
 | `==` | equal to |
 | `!=` | not equal to |
 
-```csharp
-Console.WriteLine(3 < 4);
-Console.WriteLine(3 == 4);
-Console.WriteLine(4 >= 3);
+```rust
+fn main() {
+    println!("{}", 3 < 4);
+    println!("{}", 3 == 4);
+    println!("{}", 4 >= 3);
+}
 ```
 
 ```
-$ dotnet run
-True
-False
-True
+$ cargo run
+true
+false
+true
+```
+
+Rust also provides ordering comparisons through the `Ord` trait:
+
+```rust
+use std::cmp::Ordering;
+
+fn main() {
+    let result = 3.cmp(&4);
+    match result {
+        Ordering::Less => println!("3 is less than 4"),
+        Ordering::Equal => println!("3 equals 4"),
+        Ordering::Greater => println!("3 is greater than 4"),
+    }
+}
+```
+
+```
+$ cargo run
+3 is less than 4
 ```
 
 ## C# Bitwise Operators
