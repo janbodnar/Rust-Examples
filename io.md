@@ -5,6 +5,10 @@
 
 ### Reading a file
 
+Reading entire file content into a String in one operation. The  
+fs::read_to_string() function is the simplest way to read text files  
+when you need all content at once.
+
 ```rust
 use std::fs;
 
@@ -15,7 +19,14 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
-Explicit Error Handling
+This example demonstrates the most straightforward file reading approach.  
+The fs::read_to_string() function reads the entire file into memory as a  
+UTF-8 String, making it ideal for configuration files or small text  
+files. The ? operator propagates any I/O errors up to the caller.
+
+Alternative approach with explicit error handling using pattern matching.  
+This provides more control over error handling compared to the ? operator,  
+allowing custom responses to different types of failures.
 
 ```rust
 use std::fs;
@@ -28,8 +39,17 @@ fn main() {
 }
 ```
 
+The match expression handles both success and failure cases explicitly.  
+This pattern is useful when you want to continue program execution even  
+if file reading fails, or when you need different error handling logic  
+for different error types.
+
 
 ### Reading a file line by line
+
+Memory-efficient file processing for large files. BufReader provides  
+buffered reading which improves performance and allows processing files  
+line by line without loading everything into memory.
 
 ```rust
 use std::fs::File;
@@ -46,7 +66,16 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
+This approach is ideal for processing large files or when you need to  
+handle each line individually. BufReader wraps the File handle and  
+provides efficient buffered I/O. The lines() iterator yields Result<String>  
+for each line, requiring error handling with the ? operator.
 ### Reading a file by buffer
+
+Low-level reading with explicit buffer management. This approach gives  
+you control over buffer size and allows processing binary data or  
+implementing custom reading logic.
 
 ```rust
 use std::fs::File;
@@ -71,7 +100,16 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+This method provides maximum control over the reading process. The buffer  
+size can be tuned for performance, and the loop continues until read()  
+returns 0, indicating end of file. This approach works with both text  
+and binary files, processing data in chunks.
+
 ### Writing to a file
+
+Creating and writing content to a new file. File::create() overwrites  
+existing files or creates new ones, providing a simple way to output  
+text or binary data.
 
 ```rust
 use std::fs::File;
@@ -85,7 +123,16 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+File::create() creates a new file or truncates an existing one to zero  
+length. The write_all() method ensures all data is written, which is  
+more reliable than write() for complete data output. Both byte strings  
+(b"...") and regular strings can be written using as_bytes().
+
 ### Appending to a file
+
+Adding content to existing files without overwriting. OpenOptions  
+provides fine-grained control over file opening behavior, including  
+append mode and automatic file creation.
 
 ```rust
 use std::fs::OpenOptions;
@@ -102,7 +149,16 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+OpenOptions builder pattern allows precise control over file opening  
+behavior. The append(true) flag positions writes at the end of file,  
+create(true) makes new files if they don't exist, preserving existing  
+content when files already exist.
+
 ### Getting file information
+
+Retrieving file metadata including size, type, and timestamps. File  
+metadata provides essential information for file management and  
+validation operations.
 
 ```rust
 use std::fs;
@@ -134,9 +190,17 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+The metadata() function returns comprehensive file information including  
+size, file type flags, and system timestamps. Timestamp availability  
+depends on the filesystem and platform. The chrono crate helps format  
+timestamps in human-readable form.
+
 ## File Management
 
 ### Creating a file
+
+Simple file creation using File::create(). This is the most basic way  
+to create new files, automatically overwriting existing ones.
 
 ```rust
 use std::fs::File;
@@ -148,7 +212,14 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+File::create() creates an empty file or truncates an existing file to  
+zero length. The file handle is automatically closed when the variable  
+goes out of scope, ensuring proper resource cleanup.
+
 ### Creating a file while checking if it exists
+
+Safe file creation that respects existing files. This pattern prevents  
+accidental overwrites by checking file existence before creation.
 
 ```rust
 use std::fs::File;
@@ -168,7 +239,15 @@ fn main() -> std::io::Result<()> {
 }
 ```
 
+Path::new().exists() checks for file existence without attempting to  
+open it. This approach is safer for preserving existing files and  
+provides feedback about whether a new file was actually created.
+
 ## Reading Environment Variables
+
+Accessing system environment variables for configuration and system  
+information. Environment variables provide a standard way to pass  
+configuration data to programs.
 
 ```rust
 use std::env;
@@ -182,9 +261,16 @@ fn main() {
 }
 ```
 
+The env::var() function returns a Result<String, VarError> allowing  
+graceful handling of missing variables. This pattern is essential for  
+reading configuration values, system paths, and user preferences.
+
 ## Directory Operations
 
 ### Creating a directory
+
+Basic directory creation with fs::create_dir(). This function creates  
+a single directory level and fails if parent directories don't exist.
 
 ```rust
 use std::fs;
@@ -195,7 +281,14 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
+fs::create_dir() creates only one directory level. If you need to create  
+multiple directory levels at once, use fs::create_dir_all() instead.  
+The function fails if the directory already exists.
 ### Listing a directory
+
+Reading directory contents to enumerate files and subdirectories.  
+The fs::read_dir() function provides an iterator over directory entries.
 
 ```rust
 use std::fs;
@@ -215,7 +308,16 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
+Each directory entry requires error handling as the iterator yields  
+Result values. The path.file_name() method extracts just the filename  
+without the directory path. The to_string_lossy() handles potential  
+Unicode conversion issues safely.
 ### Listing directory recursively
+
+Walking directory trees to list all files and subdirectories at any  
+depth. This example demonstrates recursive directory traversal with  
+proper indentation for visualization.
 
 ```rust
 use std::fs;
@@ -261,6 +363,11 @@ fn list_dir_recursive(path: &std::path::Path, depth: usize) -> std::io::Result<(
     Ok(())
 }
 ```
+
+The recursive function tracks depth for indentation and calls itself for  
+subdirectories. The is_dir() check distinguishes between files and  
+directories. This pattern is useful for file system analysis and  
+backup operations.
 
 ## Console I/O
 
