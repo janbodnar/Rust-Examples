@@ -1059,7 +1059,7 @@ fn main() -> std::io::Result<()> {
     
     Ok(())
 }
-
+```
 
 ## Changing File Permissions
 
@@ -1076,6 +1076,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
 *Note: The permissions example is for Unix-like systems.*
 
 
