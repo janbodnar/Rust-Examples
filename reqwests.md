@@ -1,5 +1,25 @@
 # Requests
 
+## HEAD request
+
+```rust
+use reqwest::blocking::Client;
+use reqwest::Error;
+
+fn main() -> Result<(), Error> {
+    let client = Client::new();
+    let response = client.head("https://webcode.me").send()?;
+
+    println!("Status: {}", response.status());
+
+    for (key, value) in response.headers() {
+        println!("Header: {}: {}", key, value.to_str().unwrap_or("<invalid UTF-8>"));
+    }
+
+    Ok(())
+}
+```
+
 
 ## Async fetch title
 
