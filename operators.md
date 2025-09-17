@@ -462,17 +462,16 @@ $ cargo run
 3 is less than 4
 ```
 
-## C# Bitwise Operators
+## Rust Bitwise Operators
 
 Decimal numbers are natural to humans. Binary numbers are native to  
 computers. Binary, octal, decimal, or hexadecimal symbols are only  
 notations of the same number. Bitwise operators work with bits of a  
-binary number. Bitwise operators are seldom used in higher level  
-languages like C#.
+binary number.
 
 | Symbol | Name |
 |--------|------|
-| `~` | bitwise not |
+| `!` | bitwise not |
 | `^` | bitwise exclusive or |
 | `&` | bitwise and |
 | `|` | bitwise or |
@@ -482,9 +481,11 @@ languages like C#.
 The bitwise and operator `&` performs bit-by-bit comparison. The bit  
 result is 1 only if both bits are 1.
 
-```csharp
-Console.WriteLine(6 & 3);
-Console.WriteLine(3 & 6);
+```rust
+fn main() {
+    println!("{}", 6 & 3);
+    println!("{}", 3 & 6);
+}
 ```
 
 The first number is 6, which is 110 in binary. The second is 3, which  
@@ -500,9 +501,11 @@ is 011 in binary. The result is 010, which is 2 in decimal.
 The bitwise or operator `|` performs bit-by-bit comparison. The bit  
 result is 1 if either of the bits is 1.
 
-```csharp
-Console.WriteLine(6 | 3);
-Console.WriteLine(3 | 6);
+```rust
+fn main() {
+    println!("{}", 6 | 3);
+    println!("{}", 3 | 6);
+}
 ```
 
 The result is 111, which is 7 in decimal.
@@ -517,9 +520,11 @@ The result is 111, which is 7 in decimal.
 The bitwise exclusive or operator `^` performs bit-by-bit comparison.  
 The bit result is 1 if exactly one of the bits is 1.
 
-```csharp
-Console.WriteLine(6 ^ 3);
-Console.WriteLine(3 ^ 6);
+```rust
+fn main() {
+    println!("{}", 6 ^ 3);
+    println!("{}", 3 ^ 6);
+}
 ```
 
 The result is 101, which is 5 in decimal.
@@ -531,15 +536,20 @@ The result is 101, which is 5 in decimal.
 101
 ```
 
-The bitwise not operator `~` reverses all bits of the number.
+The bitwise not operator `!` reverses all bits of the number.
 
-```csharp
-Console.WriteLine(~7);
-Console.WriteLine(~-8);
+```rust
+fn main() {
+    let x: i8 = 7;
+    println!("{}", !x);
+    
+    let y: i8 = -8;
+    println!("{}", !y);
+}
 ```
 
 ```
-$ dotnet run
+$ cargo run
 -8
 7
 ```
@@ -547,16 +557,18 @@ $ dotnet run
 The left shift operator `<<` shifts bits to the left. The right operand  
 specifies the number of positions to shift the left operand.
 
-```csharp
-Console.WriteLine(9 << 1);
-Console.WriteLine(9 << 2);
+```rust
+fn main() {
+    println!("{}", 9 << 1);
+    println!("{}", 9 << 2);
+}
 ```
 
 9 is 1001 in binary. 9 << 1 returns 10010, which is 18 in decimal.  
 9 << 2 returns 100100, which is 36 in decimal.
 
 ```
-$ dotnet run
+$ cargo run
 18
 36
 ```
@@ -564,56 +576,87 @@ $ dotnet run
 The right shift operator `>>` shifts bits to the right. The left operand  
 is shifted the number of places specified by the right operand.
 
-```csharp
-Console.WriteLine(9 >> 1);
-Console.WriteLine(9 >> 2);
+```rust
+fn main() {
+    println!("{}", 9 >> 1);
+    println!("{}", 9 >> 2);
+}
 ```
 
 9 >> 1 returns 100, which is 4 in decimal. 9 >> 2 returns 10, which is  
 2 in decimal.
 
 ```
-$ dotnet run
+$ cargo run
 4
 2
 ```
 
-## C# Compound Assignment Operators
+### Binary Literals and Formatting
+
+Rust supports binary literals and formatting for easier bit manipulation:
+
+```rust
+fn main() {
+    let x = 0b1010; // Binary literal for 10
+    let y = 0b1100; // Binary literal for 12
+    
+    println!("x = {:04b} ({})", x, x);
+    println!("y = {:04b} ({})", y, y);
+    println!("x & y = {:04b} ({})", x & y, x & y);
+    println!("x | y = {:04b} ({})", x | y, x | y);
+    println!("x ^ y = {:04b} ({})", x ^ y, x ^ y);
+}
+```
+
+```
+$ cargo run
+x = 1010 (10)
+y = 1100 (12)
+x & y = 1000 (8)
+x | y = 1110 (14)
+x ^ y = 0110 (6)
+```
+
+## Rust Compound Assignment Operators
 
 The compound assignment operators consist of two operators. They are  
 shorthand operators.
 
-```csharp
-int a = 1;
-a = a + 1;
-
-Console.WriteLine(a);
-
-a += 5;
-Console.WriteLine(a);
-
-a *= 3;
-Console.WriteLine(a);
+```rust
+fn main() {
+    let mut a = 1;
+    a = a + 1;
+    
+    println!("{}", a);
+    
+    a += 5;
+    println!("{}", a);
+    
+    a *= 3;
+    println!("{}", a);
+}
 ```
 
-In the example, we use two compound operators.
+In the example, we use two compound operators. Note that variables must  
+be declared as `mut` to use compound assignment operators.
 
-```csharp
-int a = 1;
+```rust
+let mut a = 1;
 a = a + 1;
 ```
 
 The `a` variable is initiated to one. 1 is added to the variable using  
 the non-shorthand notation.
 
-```csharp
+```rust
 a += 5;
 ```
 
 Using a `+=` compound operator, we add 5 to the `a` variable. The  
 statement is equal to `a = a + 5;`.
 
-```csharp
+```rust
 a *= 3;
 ```
 
@@ -621,89 +664,247 @@ Using the `*=` operator, the `a` is multiplied by 3. The statement is
 equal to `a = a * 3;`.
 
 ```
-$ dotnet run
+$ cargo run
 2
 7
 21
 ```
 
-## C# new Operator
+Rust supports all the standard compound assignment operators:
 
-The `new` operator is used to create objects and invoke constructors.
-
-```csharp
-var words = new string[] {"sky", "cup", "odd", "car"};
-
-foreach (string word in words)
-{
-    Console.WriteLine(word);
+```rust
+fn main() {
+    let mut x = 10;
+    
+    x += 5;   // Addition assignment
+    println!("After += 5: {}", x);
+    
+    x -= 3;   // Subtraction assignment  
+    println!("After -= 3: {}", x);
+    
+    x *= 2;   // Multiplication assignment
+    println!("After *= 2: {}", x);
+    
+    x /= 4;   // Division assignment
+    println!("After /= 4: {}", x);
+    
+    x %= 3;   // Remainder assignment
+    println!("After %= 3: {}", x);
+    
+    // Bitwise compound assignments
+    x |= 0b1001;  // Bitwise OR assignment
+    println!("After |= 0b1001: {:04b}", x);
+    
+    x &= 0b1010;  // Bitwise AND assignment
+    println!("After &= 0b1010: {:04b}", x);
+    
+    x ^= 0b0110;  // Bitwise XOR assignment
+    println!("After ^= 0b0110: {:04b}", x);
 }
 ```
 
-We create an array of strings with the `new` operator.
-
 ```
-$ dotnet run
-sky
-cup
-odd
-car
-```
-
-## C# Member Access Operator
-
-The dot `.` operator provides access to members of a namespace, a type,  
-or an object.
-
-```csharp
-var now = DateTime.Now;
-Console.WriteLine(now);
-
-string name = "Jane";
-Console.WriteLine(name.ToUpper());
-Console.WriteLine(name.Length);
+$ cargo run
+After += 5: 15
+After -= 3: 12
+After *= 2: 24
+After /= 4: 6
+After %= 3: 0
+After |= 0b1001: 1001
+After &= 0b1010: 1000
+After ^= 0b0110: 1110
 ```
 
-With the dot operator, we access the static `Now` property of the  
-`DateTime` type. We also access the `ToUpper()` method and `Length`  
-property of a string.
+## Rust Struct Instantiation and Memory Allocation
+
+Rust doesn't have a `new` keyword like some languages. Instead, structs  
+are created using struct literal syntax, and heap allocation is done  
+explicitly with `Box::new()`.
+
+```rust
+struct Person {
+    name: String,
+    age: u32,
+}
+
+fn main() {
+    // Stack allocation
+    let person1 = Person {
+        name: "Alice".to_string(),
+        age: 30,
+    };
+    
+    // Heap allocation with Box
+    let person2 = Box::new(Person {
+        name: "Bob".to_string(),
+        age: 25,
+    });
+    
+    println!("{} is {} years old", person1.name, person1.age);
+    println!("{} is {} years old", person2.name, person2.age);
+    
+    // Vector creation
+    let numbers = vec![1, 2, 3, 4, 5];
+    println!("Numbers: {:?}", numbers);
+}
+```
+
+The `vec!` macro creates a new vector, which is allocated on the heap.
 
 ```
-$ dotnet run
-12/28/2024 10:30:45 AM
+$ cargo run
+Alice is 30 years old
+Bob is 25 years old
+Numbers: [1, 2, 3, 4, 5]
+```
+
+## Rust Member Access Operator
+
+The dot `.` operator provides access to fields of structs, methods, and  
+associated functions.
+
+```rust
+use std::time::SystemTime;
+
+fn main() {
+    let now = SystemTime::now();
+    println!("{:?}", now);
+    
+    let name = "Jane";
+    println!("{}", name.to_uppercase());
+    println!("{}", name.len());
+    
+    // Struct field access
+    struct Point {
+        x: f64,
+        y: f64,
+    }
+    
+    let point = Point { x: 3.0, y: 4.0 };
+    println!("Point: ({}, {})", point.x, point.y);
+}
+```
+
+With the dot operator, we access the associated function `now()` of the  
+`SystemTime` type. We also access methods on string slices and struct fields.
+
+```
+$ cargo run
+SystemTime { tv_sec: 1693910445, tv_nsec: 123456789 }
 JANE
 4
+Point: (3, 4)
 ```
 
-## C# Null-Conditional Operators
+### Method Chaining
 
-The null-conditional operators `?.` and `?[]` perform a member access  
-or element access operation only if an operand is non-null; otherwise,  
-they return null.
+Rust supports method chaining when methods return `Self` or other types  
+that have methods:
 
-```csharp
-string? text = null;
-Console.WriteLine(text?.Length);
-
-string text2 = "falcon";  
-Console.WriteLine(text2?.Length);
-
-int[]? vals = null;
-Console.WriteLine(vals?[0]);
-
-int[] vals2 = {1, 2, 3, 4, 5};
-Console.WriteLine(vals2?[0]);
+```rust
+fn main() {
+    let result = "  hello world  "
+        .trim()
+        .to_uppercase()
+        .replace("WORLD", "RUST");
+        
+    println!("{}", result);
+    
+    let numbers: Vec<i32> = (1..=5)
+        .map(|x| x * x)
+        .filter(|&x| x > 10)
+        .collect();
+        
+    println!("{:?}", numbers);
+}
 ```
 
-If the left-hand operand is null, then these operators return null  
-instead of throwing a NullReferenceException.
+```
+$ cargo run
+HELLO RUST
+[16, 25]
+```
+
+## Rust Option and Error Handling Operators
+
+Rust doesn't have null values, but uses `Option<T>` to represent optional  
+values and the `?` operator for error propagation.
+
+### Option Handling
+
+```rust
+fn main() {
+    let text: Option<&str> = None;
+    println!("{:?}", text);
+    
+    let text2: Option<&str> = Some("falcon");
+    println!("{:?}", text2);
+    
+    // Safe access with pattern matching
+    match text2 {
+        Some(s) => println!("Length: {}", s.len()),
+        None => println!("No text"),
+    }
+    
+    // Using if let
+    if let Some(s) = text2 {
+        println!("Text: {}", s);
+    }
+    
+    // Using unwrap_or for default values
+    let length = text.map(|s| s.len()).unwrap_or(0);
+    println!("Length: {}", length);
+}
+```
 
 ```
-$ dotnet run
+$ cargo run
+None
+Some("falcon")
+Length: 6
+Text: falcon
+Length: 0
+```
 
-6
+### The ? Operator
 
-1
+The `?` operator is used for error propagation and Option unwrapping:
+
+```rust
+use std::fs::File;
+use std::io::{self, Read};
+
+fn read_file_contents(filename: &str) -> Result<String, io::Error> {
+    let mut file = File::open(filename)?;  // ? propagates error
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;   // ? propagates error
+    Ok(contents)
+}
+
+fn get_first_word(text: Option<&str>) -> Option<&str> {
+    let text = text?;  // Return None if text is None
+    text.split_whitespace().next()
+}
+
+fn main() {
+    match read_file_contents("example.txt") {
+        Ok(contents) => println!("File contents: {}", contents),
+        Err(e) => println!("Error reading file: {}", e),
+    }
+    
+    let text = Some("hello world");
+    let first_word = get_first_word(text);
+    println!("First word: {:?}", first_word);
+}
+```
+
+The `?` operator provides concise error handling without explicit match  
+statements for every operation that could fail.
+
+```
+$ cargo run
+Error reading file: No such file or directory (os error 2)
+First word: Some("hello")
 ```
 
 ## C# Index from End Operator ^
