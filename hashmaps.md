@@ -745,6 +745,438 @@ pairs. Use `filter()` and `map()` to transform HashMaps selectively. The
 `fold()` method is powerful for creating HashMaps from sequences with  
 custom logic.  
 
+## Caching and memoization
+
+Use HashMap for implementing caches and memoization patterns.  
+
+```rust
+use std::collections::HashMap;
+
+struct Fibonacci {
+    cache: HashMap<u64, u64>,
+}
+
+impl Fibonacci {
+    fn new() -> Self {
+        let mut cache = HashMap::new();
+        cache.insert(0, 0);
+        cache.insert(1, 1);
+        Fibonacci { cache }
+    }
+    
+    fn calculate(&mut self, n: u64) -> u64 {
+        if let Some(&result) = self.cache.get(&n) {
+            return result;
+        }
+        
+        let result = self.calculate(n - 1) + self.calculate(n - 2);
+        self.cache.insert(n, result);
+        result
+    }
+}
+
+fn main() {
+    let mut fib = Fibonacci::new();
+    
+    println!("First 15 Fibonacci numbers:");
+    for i in 0..15 {
+        println!("fib({}) = {}", i, fib.calculate(i));
+    }
+    
+    println!("Cache size: {}", fib.cache.len());
+    
+    // Simple cache for expensive operations
+    let mut expensive_cache: HashMap<String, String> = HashMap::new();
+    
+    let inputs = ["hello", "world", "rust", "hello"];
+    for input in inputs {
+        let result = expensive_cache
+            .entry(input.to_string())
+            .or_insert_with(|| {
+                println!("Computing expensive operation for: {}", input);
+                input.to_uppercase() // Simulate expensive operation
+            });
+        
+        println!("Result for '{}': {}", input, result);
+    }
+}
+```
+
+Memoization stores computation results to avoid redundant calculations.  
+HashMap provides O(1) lookup time, making it ideal for caching. The entry  
+API ensures that expensive operations are only performed once per unique  
+input. This pattern is especially useful for recursive algorithms and  
+expensive function calls.  
+
+## Configuration and settings management
+
+Manage application configuration using HashMap structures.  
+
+```rust
+use std::collections::HashMap;
+
+#[derive(Debug, Clone)]
+struct DatabaseConfig {
+    host: String,
+    port: u16,
+    username: String,
+    max_connections: u32,
+}
+
+#[derive(Debug)]
+struct AppConfig {
+    settings: HashMap<String, String>,
+    database_configs: HashMap<String, DatabaseConfig>,
+    feature_flags: HashMap<String, bool>,
+}
+
+impl AppConfig {
+    fn new() -> Self {
+        AppConfig {
+            settings: HashMap::new(),
+            database_configs: HashMap::new(),
+            feature_flags: HashMap::new(),
+        }
+    }
+    
+    fn set_setting(&mut self, key: &str, value: &str) {
+        self.settings.insert(key.to_string(), value.to_string());
+    }
+    
+    fn get_setting(&self, key: &str) -> Option<&String> {
+        self.settings.get(key)
+    }
+    
+    fn add_database(&mut self, name: &str, config: DatabaseConfig) {
+        self.database_configs.insert(name.to_string(), config);
+    }
+    
+    fn enable_feature(&mut self, feature: &str) {
+        self.feature_flags.insert(feature.to_string(), true);
+    }
+    
+    fn is_feature_enabled(&self, feature: &str) -> bool {
+        self.feature_flags.get(feature).unwrap_or(&false).clone()
+    }
+}
+
+fn main() {
+    let mut config = AppConfig::new();
+    
+    // Basic settings
+    config.set_setting("app_name", "MyApp");
+    config.set_setting("version", "1.0.0");
+    config.set_setting("log_level", "info");
+    
+    // Database configurations
+    config.add_database("primary", DatabaseConfig {
+        host: "localhost".to_string(),
+        port: 5432,
+        username: "app_user".to_string(),
+        max_connections: 20,
+    });
+    
+    config.add_database("cache", DatabaseConfig {
+        host: "redis.local".to_string(),
+        port: 6379,
+        username: "redis_user".to_string(),
+        max_connections: 10,
+    });
+    
+    // Feature flags
+    config.enable_feature("new_ui");
+    config.enable_feature("beta_features");
+    
+    // Use configuration
+    if let Some(app_name) = config.get_setting("app_name") {
+        println!("Starting application: {}", app_name);
+    }
+    
+    if config.is_feature_enabled("new_ui") {
+        println!("Using new UI interface");
+    }
+    
+    println!("Configuration: {:#?}", config);
+}
+```
+
+HashMap is excellent for configuration management because it provides  
+flexible key-value storage with fast lookups. This pattern allows dynamic  
+configuration where settings can be added or modified at runtime. Feature  
+flags enable/disable functionality, while structured configs handle complex  
+settings like database connections.  
+
+## Building lookup tables and indexes
+
+Create efficient lookup tables and indexes for data relationships.  
+
+```rust
+use std::collections::HashMap;
+
+#[derive(Debug, Clone)]
+struct Employee {
+    id: u32,
+    name: String,
+    department: String,
+    salary: u32,
+    manager_id: Option<u32>,
+}
+
+struct EmployeeIndex {
+    by_id: HashMap<u32, Employee>,
+    by_department: HashMap<String, Vec<u32>>,
+    by_manager: HashMap<u32, Vec<u32>>,
+    by_salary_range: HashMap<String, Vec<u32>>,
+}
+
+impl EmployeeIndex {
+    fn new() -> Self {
+        EmployeeIndex {
+            by_id: HashMap::new(),
+            by_department: HashMap::new(),
+            by_manager: HashMap::new(),
+            by_salary_range: HashMap::new(),
+        }
+    }
+    
+    fn add_employee(&mut self, employee: Employee) {
+        let id = employee.id;
+        let department = employee.department.clone();
+        let salary_range = Self::get_salary_range(employee.salary);
+        
+        // Index by department
+        self.by_department
+            .entry(department)
+            .or_insert_with(Vec::new)
+            .push(id);
+        
+        // Index by manager
+        if let Some(manager_id) = employee.manager_id {
+            self.by_manager
+                .entry(manager_id)
+                .or_insert_with(Vec::new)
+                .push(id);
+        }
+        
+        // Index by salary range
+        self.by_salary_range
+            .entry(salary_range)
+            .or_insert_with(Vec::new)
+            .push(id);
+        
+        // Store the employee
+        self.by_id.insert(id, employee);
+    }
+    
+    fn get_employee(&self, id: u32) -> Option<&Employee> {
+        self.by_id.get(&id)
+    }
+    
+    fn get_employees_in_department(&self, department: &str) -> Vec<&Employee> {
+        self.by_department
+            .get(department)
+            .map(|ids| {
+                ids.iter()
+                    .filter_map(|&id| self.by_id.get(&id))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+    
+    fn get_direct_reports(&self, manager_id: u32) -> Vec<&Employee> {
+        self.by_manager
+            .get(&manager_id)
+            .map(|ids| {
+                ids.iter()
+                    .filter_map(|&id| self.by_id.get(&id))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+    
+    fn get_salary_range(salary: u32) -> String {
+        match salary {
+            0..=30000 => "low".to_string(),
+            30001..=70000 => "medium".to_string(),
+            70001..=120000 => "high".to_string(),
+            _ => "executive".to_string(),
+        }
+    }
+}
+
+fn main() {
+    let mut index = EmployeeIndex::new();
+    
+    // Add employees
+    index.add_employee(Employee {
+        id: 1,
+        name: "Alice Johnson".to_string(),
+        department: "Engineering".to_string(),
+        salary: 75000,
+        manager_id: Some(3),
+    });
+    
+    index.add_employee(Employee {
+        id: 2,
+        name: "Bob Smith".to_string(),
+        department: "Engineering".to_string(),
+        salary: 65000,
+        manager_id: Some(3),
+    });
+    
+    index.add_employee(Employee {
+        id: 3,
+        name: "Carol Williams".to_string(),
+        department: "Engineering".to_string(),
+        salary: 95000,
+        manager_id: None,
+    });
+    
+    // Query using indexes
+    println!("Engineering employees:");
+    for emp in index.get_employees_in_department("Engineering") {
+        println!("  {}: ${}", emp.name, emp.salary);
+    }
+    
+    println!("\nCarol's direct reports:");
+    for emp in index.get_direct_reports(3) {
+        println!("  {}", emp.name);
+    }
+}
+```
+
+Multiple HashMap indexes enable efficient querying from different  
+perspectives. Each index maps a different attribute to employee IDs,  
+allowing fast lookups by department, manager, salary range, etc. This  
+pattern is common in database design and provides O(1) average lookup  
+performance for indexed attributes.  
+
+## State machines and workflow management
+
+Implement state machines and workflow systems using HashMap.  
+
+```rust
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum OrderState {
+    Pending,
+    Processing,
+    Shipped,
+    Delivered,
+    Cancelled,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum OrderEvent {
+    Pay,
+    Process,
+    Ship,
+    Deliver,
+    Cancel,
+}
+
+struct OrderStateMachine {
+    transitions: HashMap<(OrderState, OrderEvent), OrderState>,
+    current_states: HashMap<String, OrderState>,
+}
+
+impl OrderStateMachine {
+    fn new() -> Self {
+        let mut transitions = HashMap::new();
+        
+        // Define state transitions
+        transitions.insert((OrderState::Pending, OrderEvent::Pay), OrderState::Processing);
+        transitions.insert((OrderState::Pending, OrderEvent::Cancel), OrderState::Cancelled);
+        transitions.insert((OrderState::Processing, OrderEvent::Ship), OrderState::Shipped);
+        transitions.insert((OrderState::Processing, OrderEvent::Cancel), OrderState::Cancelled);
+        transitions.insert((OrderState::Shipped, OrderEvent::Deliver), OrderState::Delivered);
+        
+        OrderStateMachine {
+            transitions,
+            current_states: HashMap::new(),
+        }
+    }
+    
+    fn create_order(&mut self, order_id: String) {
+        self.current_states.insert(order_id, OrderState::Pending);
+    }
+    
+    fn process_event(&mut self, order_id: &str, event: OrderEvent) -> Result<OrderState, String> {
+        let current_state = self.current_states
+            .get(order_id)
+            .ok_or_else(|| format!("Order {} not found", order_id))?;
+        
+        let new_state = self.transitions
+            .get(&(current_state.clone(), event.clone()))
+            .ok_or_else(|| {
+                format!("Invalid transition: {:?} -> {:?}", current_state, event)
+            })?;
+        
+        self.current_states.insert(order_id.to_string(), new_state.clone());
+        Ok(new_state.clone())
+    }
+    
+    fn get_state(&self, order_id: &str) -> Option<&OrderState> {
+        self.current_states.get(order_id)
+    }
+    
+    fn get_valid_events(&self, order_id: &str) -> Vec<OrderEvent> {
+        if let Some(current_state) = self.current_states.get(order_id) {
+            self.transitions
+                .keys()
+                .filter(|(state, _)| state == current_state)
+                .map(|(_, event)| event.clone())
+                .collect()
+        } else {
+            Vec::new()
+        }
+    }
+}
+
+fn main() {
+    let mut state_machine = OrderStateMachine::new();
+    
+    // Create orders
+    state_machine.create_order("ORDER-001".to_string());
+    state_machine.create_order("ORDER-002".to_string());
+    
+    println!("Initial states:");
+    println!("ORDER-001: {:?}", state_machine.get_state("ORDER-001"));
+    println!("ORDER-002: {:?}", state_machine.get_state("ORDER-002"));
+    
+    // Process events
+    match state_machine.process_event("ORDER-001", OrderEvent::Pay) {
+        Ok(new_state) => println!("ORDER-001 transitioned to: {:?}", new_state),
+        Err(e) => println!("Error: {}", e),
+    }
+    
+    match state_machine.process_event("ORDER-001", OrderEvent::Ship) {
+        Ok(new_state) => println!("ORDER-001 transitioned to: {:?}", new_state),
+        Err(e) => println!("Error: {}", e),
+    }
+    
+    // Try invalid transition
+    match state_machine.process_event("ORDER-002", OrderEvent::Ship) {
+        Ok(new_state) => println!("ORDER-002 transitioned to: {:?}", new_state),
+        Err(e) => println!("Error: {}", e),
+    }
+    
+    // Show valid events
+    println!("Valid events for ORDER-001: {:?}", 
+             state_machine.get_valid_events("ORDER-001"));
+    println!("Valid events for ORDER-002: {:?}", 
+             state_machine.get_valid_events("ORDER-002"));
+}
+```
+
+HashMap-based state machines use composite keys (current_state, event) to  
+define valid transitions. This pattern ensures type safety and prevents  
+invalid state changes. The current state of each entity is tracked  
+separately, allowing multiple instances to exist simultaneously. State  
+machines are useful for order processing, user workflows, and protocol  
+implementations.
+
 ## Nested HashMaps and complex structures
 
 Work with multi-level data structures using nested HashMaps.  
