@@ -172,7 +172,6 @@ fn main() {
 
 ```rust
 fn main() {
-fn main() {
     let x = 212;
     println!("{x}");
 
