@@ -1833,3 +1833,1109 @@ fn main() {
 This example demonstrates testing best practices: organized test modules,  
 descriptive test names, test fixtures, comprehensive coverage of success  
 and failure cases, and clear separation between different types of tests.  
+
+## Testing Option types
+
+Testing functions that return Option types requires verifying both  
+Some and None cases along with proper handling of wrapped values.  
+
+```rust
+fn find_first_even(numbers: &[i32]) -> Option<i32> {
+    numbers.iter().find(|&&x| x % 2 == 0).copied()
+}
+
+fn safe_get(vec: &[String], index: usize) -> Option<&String> {
+    vec.get(index)
+}
+
+fn parse_positive_number(s: &str) -> Option<u32> {
+    s.parse::<u32>().ok().filter(|&n| n > 0)
+}
+
+#[test]
+fn test_find_first_even_some() {
+    let numbers = [1, 3, 4, 7, 8];
+    let result = find_first_even(&numbers);
+    assert_eq!(result, Some(4));
+}
+
+#[test]
+fn test_find_first_even_none() {
+    let numbers = [1, 3, 5, 7, 9];
+    let result = find_first_even(&numbers);
+    assert_eq!(result, None);
+}
+
+#[test]
+fn test_safe_get_valid_index() {
+    let items = vec!["hello".to_string(), "world".to_string()];
+    let result = safe_get(&items, 0);
+    assert_eq!(result, Some(&"hello".to_string()));
+}
+
+#[test]
+fn test_safe_get_invalid_index() {
+    let items = vec!["hello".to_string()];
+    let result = safe_get(&items, 5);
+    assert_eq!(result, None);
+}
+
+#[test]
+fn test_parse_positive_number() {
+    assert_eq!(parse_positive_number("42"), Some(42));
+    assert_eq!(parse_positive_number("0"), None);
+    assert_eq!(parse_positive_number("-5"), None);
+    assert_eq!(parse_positive_number("invalid"), None);
+}
+
+fn main() {
+    println!("Testing Option type handling");
+}
+```
+
+When testing Option types, verify both success and failure paths. Use  
+pattern matching or helper methods like `is_some()`, `is_none()` for  
+more expressive assertions when the wrapped value isn't important.  
+
+## Testing with floating point precision
+
+Testing floating-point operations requires careful handling of precision  
+issues and proper comparison techniques for reliable results.  
+
+```rust
+use std::f64::EPSILON;
+
+fn calculate_circle_area(radius: f64) -> f64 {
+    std::f64::consts::PI * radius * radius
+}
+
+fn solve_quadratic(a: f64, b: f64, c: f64) -> Option<(f64, f64)> {
+    let discriminant = b * b - 4.0 * a * c;
+    if discriminant < 0.0 {
+        None
+    } else {
+        let sqrt_discriminant = discriminant.sqrt();
+        let x1 = (-b + sqrt_discriminant) / (2.0 * a);
+        let x2 = (-b - sqrt_discriminant) / (2.0 * a);
+        Some((x1, x2))
+    }
+}
+
+fn approx_equal(a: f64, b: f64, tolerance: f64) -> bool {
+    (a - b).abs() < tolerance
+}
+
+#[test]
+fn test_circle_area_precision() {
+    let area = calculate_circle_area(1.0);
+    let expected = std::f64::consts::PI;
+    
+    // Use epsilon for floating point comparison
+    assert!(approx_equal(area, expected, EPSILON));
+    
+    // Alternative approach using assert! with manual tolerance
+    assert!((area - expected).abs() < 1e-10);
+}
+
+#[test]
+fn test_floating_point_arithmetic() {
+    let result = 0.1 + 0.2;
+    
+    // This would fail due to floating point precision
+    // assert_eq!(result, 0.3);
+    
+    // Correct way to test floating point equality
+    assert!(approx_equal(result, 0.3, 1e-10));
+}
+
+#[test]
+fn test_quadratic_solver() {
+    // Test equation: x² - 5x + 6 = 0 (solutions: x = 2, x = 3)
+    let solutions = solve_quadratic(1.0, -5.0, 6.0).unwrap();
+    
+    assert!(approx_equal(solutions.0, 3.0, EPSILON));
+    assert!(approx_equal(solutions.1, 2.0, EPSILON));
+}
+
+#[test]
+fn test_quadratic_no_real_solutions() {
+    // Test equation: x² + 1 = 0 (no real solutions)
+    let result = solve_quadratic(1.0, 0.0, 1.0);
+    assert_eq!(result, None);
+}
+
+#[test]
+fn test_special_float_values() {
+    assert!(f64::NAN.is_nan());
+    assert!(f64::INFINITY.is_infinite());
+    assert!(f64::NEG_INFINITY.is_infinite());
+    assert!(!f64::INFINITY.is_finite());
+    assert!(42.0_f64.is_finite());
+}
+
+fn main() {
+    println!("Testing floating point precision");
+}
+```
+
+Always use tolerance-based comparison for floating-point tests. Consider  
+edge cases like NaN, infinity, and very small/large numbers that might  
+cause precision loss or overflow.  
+
+## Testing concurrent code
+
+Testing concurrent and parallel code requires special techniques to  
+ensure thread safety and verify race condition handling.  
+
+```rust
+use std::sync::{Arc, Mutex, mpsc};
+use std::thread;
+use std::time::Duration;
+
+struct Counter {
+    value: Arc<Mutex<i32>>,
+}
+
+impl Counter {
+    fn new() -> Self {
+        Self {
+            value: Arc::new(Mutex::new(0)),
+        }
+    }
+    
+    fn increment(&self) {
+        let mut val = self.value.lock().unwrap();
+        *val += 1;
+    }
+    
+    fn get(&self) -> i32 {
+        *self.value.lock().unwrap()
+    }
+}
+
+impl Clone for Counter {
+    fn clone(&self) -> Self {
+        Self {
+            value: Arc::clone(&self.value),
+        }
+    }
+}
+
+fn producer(tx: mpsc::Sender<i32>, start: i32, count: i32) {
+    for i in start..start + count {
+        tx.send(i).unwrap();
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+
+#[test]
+fn test_concurrent_counter() {
+    let counter = Counter::new();
+    let mut handles = vec![];
+    
+    // Spawn multiple threads that increment the counter
+    for _ in 0..10 {
+        let counter_clone = counter.clone();
+        let handle = thread::spawn(move || {
+            for _ in 0..100 {
+                counter_clone.increment();
+            }
+        });
+        handles.push(handle);
+    }
+    
+    // Wait for all threads to complete
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    
+    // Verify final count
+    assert_eq!(counter.get(), 1000);
+}
+
+#[test]
+fn test_channel_communication() {
+    let (tx, rx) = mpsc::channel();
+    let mut handles = vec![];
+    
+    // Spawn producer threads
+    for i in 0..3 {
+        let tx_clone = tx.clone();
+        let handle = thread::spawn(move || {
+            producer(tx_clone, i * 10, 5);
+        });
+        handles.push(handle);
+    }
+    
+    // Drop the original sender
+    drop(tx);
+    
+    // Collect all received values
+    let mut received = vec![];
+    while let Ok(value) = rx.recv() {
+        received.push(value);
+    }
+    
+    // Wait for all producers to finish
+    for handle in handles {
+        handle.join().unwrap();
+    }
+    
+    // Verify we received all expected values
+    received.sort();
+    let expected: Vec<i32> = (0..15).collect();
+    assert_eq!(received, expected);
+}
+
+#[test]
+fn test_timeout_behavior() {
+    let (tx, rx) = mpsc::channel();
+    
+    // Spawn a thread that sends after a delay
+    thread::spawn(move || {
+        thread::sleep(Duration::from_millis(100));
+        tx.send(42).unwrap();
+    });
+    
+    // Test timeout behavior
+    let result = rx.recv_timeout(Duration::from_millis(50));
+    assert!(result.is_err()); // Should timeout
+    
+    let result = rx.recv_timeout(Duration::from_millis(100));
+    assert_eq!(result.unwrap(), 42); // Should succeed
+}
+
+fn main() {
+    println!("Testing concurrent code");
+}
+```
+
+Test concurrent code by verifying thread safety, proper synchronization,  
+and absence of race conditions. Use timeouts to test asynchronous  
+behavior and ensure tests don't hang indefinitely.  
+
+## Testing macro functionality
+
+Testing macros requires special consideration for both the macro  
+expansion and the generated code behavior.  
+
+```rust
+// Define macros to test
+macro_rules! create_function {
+    ($name:ident, $return_type:ty, $value:expr) => {
+        fn $name() -> $return_type {
+            $value
+        }
+    };
+}
+
+macro_rules! assert_range {
+    ($value:expr, $min:expr, $max:expr) => {
+        assert!($value >= $min && $value <= $max, 
+               "Value {} is not in range [{}, {}]", $value, $min, $max);
+    };
+}
+
+macro_rules! hash_map {
+    ($($key:expr => $value:expr),* $(,)?) => {
+        {
+            let mut map = std::collections::HashMap::new();
+            $(
+                map.insert($key, $value);
+            )*
+            map
+        }
+    };
+}
+
+macro_rules! vec_of_strings {
+    ($($string:expr),* $(,)?) => {
+        vec![$($string.to_string()),*]
+    };
+}
+
+// Test the generated functions
+create_function!(get_answer, i32, 42);
+create_function!(get_pi, f64, 3.14159);
+create_function!(get_greeting, String, "Hello, World!".to_string());
+
+#[test]
+fn test_macro_generated_functions() {
+    assert_eq!(get_answer(), 42);
+    assert_eq!(get_pi(), 3.14159);
+    assert_eq!(get_greeting(), "Hello, World!");
+}
+
+#[test]
+fn test_assert_range_macro() {
+    // These should pass
+    assert_range!(5, 1, 10);
+    assert_range!(0, 0, 0);
+    assert_range!(-5, -10, 0);
+}
+
+#[test]
+#[should_panic(expected = "Value 15 is not in range [1, 10]")]
+fn test_assert_range_macro_failure() {
+    assert_range!(15, 1, 10);
+}
+
+#[test]
+fn test_hash_map_macro() {
+    let map = hash_map! {
+        "name" => "Alice",
+        "age" => "30",
+        "city" => "Boston",
+    };
+    
+    assert_eq!(map.len(), 3);
+    assert_eq!(map.get("name"), Some(&"Alice"));
+    assert_eq!(map.get("age"), Some(&"30"));
+    assert_eq!(map.get("city"), Some(&"Boston"));
+}
+
+#[test]
+fn test_vec_of_strings_macro() {
+    let strings = vec_of_strings!["hello", "world", "rust"];
+    
+    assert_eq!(strings.len(), 3);
+    assert_eq!(strings[0], "hello");
+    assert_eq!(strings[1], "world");
+    assert_eq!(strings[2], "rust");
+    
+    // Verify they are actually String type, not &str
+    let _: Vec<String> = strings;
+}
+
+#[test]
+fn test_empty_macro_invocations() {
+    let empty_map = hash_map! {};
+    assert!(empty_map.is_empty());
+    
+    let empty_strings = vec_of_strings![];
+    assert!(empty_strings.is_empty());
+}
+
+fn main() {
+    println!("Testing macro functionality");
+}
+```
+
+When testing macros, verify both compile-time generation and runtime  
+behavior. Test edge cases like empty inputs and ensure error messages  
+are helpful when macro usage is incorrect.  
+
+## Testing with temporary files
+
+Testing file operations safely using temporary files and directories  
+to avoid affecting the filesystem and ensure test isolation.  
+
+```rust
+use std::fs::{self, File};
+use std::io::{self, Write, Read};
+use std::path::{Path, PathBuf};
+
+struct FileManager {
+    base_dir: PathBuf,
+}
+
+impl FileManager {
+    fn new(base_dir: PathBuf) -> Self {
+        Self { base_dir }
+    }
+    
+    fn create_file(&self, name: &str, content: &str) -> io::Result<()> {
+        let file_path = self.base_dir.join(name);
+        let mut file = File::create(file_path)?;
+        file.write_all(content.as_bytes())?;
+        Ok(())
+    }
+    
+    fn read_file(&self, name: &str) -> io::Result<String> {
+        let file_path = self.base_dir.join(name);
+        let mut file = File::open(file_path)?;
+        let mut content = String::new();
+        file.read_to_string(&mut content)?;
+        Ok(content)
+    }
+    
+    fn file_exists(&self, name: &str) -> bool {
+        self.base_dir.join(name).exists()
+    }
+    
+    fn delete_file(&self, name: &str) -> io::Result<()> {
+        let file_path = self.base_dir.join(name);
+        fs::remove_file(file_path)
+    }
+    
+    fn list_files(&self) -> io::Result<Vec<String>> {
+        let mut files = Vec::new();
+        for entry in fs::read_dir(&self.base_dir)? {
+            let entry = entry?;
+            if entry.file_type()?.is_file() {
+                if let Some(name) = entry.file_name().to_str() {
+                    files.push(name.to_string());
+                }
+            }
+        }
+        files.sort();
+        Ok(files)
+    }
+}
+
+// Helper function to create temporary directory
+fn create_temp_dir() -> io::Result<PathBuf> {
+    let temp_dir = std::env::temp_dir().join(format!("rust_test_{}", 
+        std::process::id()));
+    fs::create_dir_all(&temp_dir)?;
+    Ok(temp_dir)
+}
+
+// Helper function to clean up temporary directory
+fn cleanup_temp_dir(dir: &Path) -> io::Result<()> {
+    if dir.exists() {
+        fs::remove_dir_all(dir)?;
+    }
+    Ok(())
+}
+
+#[test]
+fn test_file_create_and_read() -> io::Result<()> {
+    let temp_dir = create_temp_dir()?;
+    let file_manager = FileManager::new(temp_dir.clone());
+    
+    // Test file creation and reading
+    let content = "Hello, temporary file!";
+    file_manager.create_file("test.txt", content)?;
+    
+    assert!(file_manager.file_exists("test.txt"));
+    let read_content = file_manager.read_file("test.txt")?;
+    assert_eq!(read_content, content);
+    
+    cleanup_temp_dir(&temp_dir)?;
+    Ok(())
+}
+
+#[test]
+fn test_file_operations() -> io::Result<()> {
+    let temp_dir = create_temp_dir()?;
+    let file_manager = FileManager::new(temp_dir.clone());
+    
+    // Create multiple files
+    file_manager.create_file("file1.txt", "Content 1")?;
+    file_manager.create_file("file2.txt", "Content 2")?;
+    file_manager.create_file("file3.txt", "Content 3")?;
+    
+    // Test listing files
+    let files = file_manager.list_files()?;
+    assert_eq!(files, vec!["file1.txt", "file2.txt", "file3.txt"]);
+    
+    // Test file deletion
+    file_manager.delete_file("file2.txt")?;
+    assert!(!file_manager.file_exists("file2.txt"));
+    
+    let files_after_delete = file_manager.list_files()?;
+    assert_eq!(files_after_delete, vec!["file1.txt", "file3.txt"]);
+    
+    cleanup_temp_dir(&temp_dir)?;
+    Ok(())
+}
+
+#[test]
+fn test_file_not_found() -> io::Result<()> {
+    let temp_dir = create_temp_dir()?;
+    let file_manager = FileManager::new(temp_dir.clone());
+    
+    // Test reading non-existent file
+    let result = file_manager.read_file("nonexistent.txt");
+    assert!(result.is_err());
+    
+    // Test deleting non-existent file
+    let result = file_manager.delete_file("nonexistent.txt");
+    assert!(result.is_err());
+    
+    cleanup_temp_dir(&temp_dir)?;
+    Ok(())
+}
+
+#[test]
+fn test_empty_file() -> io::Result<()> {
+    let temp_dir = create_temp_dir()?;
+    let file_manager = FileManager::new(temp_dir.clone());
+    
+    // Test creating and reading empty file
+    file_manager.create_file("empty.txt", "")?;
+    let content = file_manager.read_file("empty.txt")?;
+    assert_eq!(content, "");
+    
+    cleanup_temp_dir(&temp_dir)?;
+    Ok(())
+}
+
+fn main() {
+    println!("Testing with temporary files");
+}
+```
+
+Always use temporary directories for file-based tests to ensure isolation  
+and prevent interference with the actual filesystem. Clean up temporary  
+resources after each test to avoid accumulating test artifacts.  
+
+## Testing trait implementations
+
+Testing trait implementations requires verifying that types correctly  
+implement the expected behavior defined by the trait contract.  
+
+```rust
+trait Shape {
+    fn area(&self) -> f64;
+    fn perimeter(&self) -> f64;
+    fn name(&self) -> &'static str;
+}
+
+trait Drawable {
+    fn draw(&self) -> String;
+}
+
+struct Circle {
+    radius: f64,
+}
+
+impl Circle {
+    fn new(radius: f64) -> Self {
+        Self { radius }
+    }
+}
+
+impl Shape for Circle {
+    fn area(&self) -> f64 {
+        std::f64::consts::PI * self.radius * self.radius
+    }
+    
+    fn perimeter(&self) -> f64 {
+        2.0 * std::f64::consts::PI * self.radius
+    }
+    
+    fn name(&self) -> &'static str {
+        "Circle"
+    }
+}
+
+impl Drawable for Circle {
+    fn draw(&self) -> String {
+        format!("Drawing a circle with radius {}", self.radius)
+    }
+}
+
+struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Rectangle {
+    fn new(width: f64, height: f64) -> Self {
+        Self { width, height }
+    }
+}
+
+impl Shape for Rectangle {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+    
+    fn perimeter(&self) -> f64 {
+        2.0 * (self.width + self.height)
+    }
+    
+    fn name(&self) -> &'static str {
+        "Rectangle"
+    }
+}
+
+impl Drawable for Rectangle {
+    fn draw(&self) -> String {
+        format!("Drawing a rectangle {}x{}", self.width, self.height)
+    }
+}
+
+// Helper function to test any shape
+fn test_shape_properties<T: Shape>(shape: &T, expected_area: f64, expected_perimeter: f64) {
+    let area = shape.area();
+    let perimeter = shape.perimeter();
+    
+    assert!((area - expected_area).abs() < 1e-10, 
+           "Area mismatch for {}: expected {}, got {}", 
+           shape.name(), expected_area, area);
+    
+    assert!((perimeter - expected_perimeter).abs() < 1e-10,
+           "Perimeter mismatch for {}: expected {}, got {}",
+           shape.name(), expected_perimeter, perimeter);
+}
+
+#[test]
+fn test_circle_trait_implementation() {
+    let circle = Circle::new(5.0);
+    
+    // Test Shape trait
+    test_shape_properties(&circle, 
+                         std::f64::consts::PI * 25.0, 
+                         2.0 * std::f64::consts::PI * 5.0);
+    assert_eq!(circle.name(), "Circle");
+    
+    // Test Drawable trait
+    assert_eq!(circle.draw(), "Drawing a circle with radius 5");
+}
+
+#[test]
+fn test_rectangle_trait_implementation() {
+    let rectangle = Rectangle::new(4.0, 6.0);
+    
+    // Test Shape trait
+    test_shape_properties(&rectangle, 24.0, 20.0);
+    assert_eq!(rectangle.name(), "Rectangle");
+    
+    // Test Drawable trait
+    assert_eq!(rectangle.draw(), "Drawing a rectangle 4x6");
+}
+
+#[test]
+fn test_polymorphic_behavior() {
+    let shapes: Vec<Box<dyn Shape>> = vec![
+        Box::new(Circle::new(3.0)),
+        Box::new(Rectangle::new(2.0, 5.0)),
+    ];
+    
+    let total_area: f64 = shapes.iter().map(|s| s.area()).sum();
+    let expected_total = (std::f64::consts::PI * 9.0) + 10.0;
+    
+    assert!((total_area - expected_total).abs() < 1e-10);
+}
+
+#[test]
+fn test_trait_object_collections() {
+    let drawables: Vec<Box<dyn Drawable>> = vec![
+        Box::new(Circle::new(2.0)),
+        Box::new(Rectangle::new(3.0, 4.0)),
+    ];
+    
+    let drawings: Vec<String> = drawables.iter().map(|d| d.draw()).collect();
+    
+    assert_eq!(drawings[0], "Drawing a circle with radius 2");
+    assert_eq!(drawings[1], "Drawing a rectangle 3x4");
+}
+
+#[test]
+fn test_multiple_trait_bounds() {
+    fn process_shape<T: Shape + Drawable>(shape: &T) -> (f64, String) {
+        (shape.area(), shape.draw())
+    }
+    
+    let circle = Circle::new(1.0);
+    let (area, drawing) = process_shape(&circle);
+    
+    assert!((area - std::f64::consts::PI).abs() < 1e-10);
+    assert_eq!(drawing, "Drawing a circle with radius 1");
+}
+
+fn main() {
+    println!("Testing trait implementations");
+}
+```
+
+Test trait implementations by verifying the contract behavior, testing  
+polymorphic usage with trait objects, and ensuring multiple traits work  
+correctly together when implemented on the same type.  
+
+## Testing with environment variables
+
+Testing code that depends on environment variables requires careful  
+setup and cleanup to avoid test interference and ensure reproducibility.  
+
+```rust
+use std::env;
+use std::collections::HashMap;
+
+struct AppConfig {
+    database_url: String,
+    port: u16,
+    debug_mode: bool,
+    api_key: Option<String>,
+}
+
+impl AppConfig {
+    fn from_env() -> Result<Self, String> {
+        let database_url = env::var("DATABASE_URL")
+            .map_err(|_| "DATABASE_URL environment variable required")?;
+        
+        let port = env::var("PORT")
+            .unwrap_or_else(|_| "3000".to_string())
+            .parse::<u16>()
+            .map_err(|_| "PORT must be a valid number")?;
+        
+        let debug_mode = env::var("DEBUG")
+            .unwrap_or_else(|_| "false".to_string())
+            .parse::<bool>()
+            .unwrap_or(false);
+        
+        let api_key = env::var("API_KEY").ok();
+        
+        Ok(Self {
+            database_url,
+            port,
+            debug_mode,
+            api_key,
+        })
+    }
+}
+
+// Test helper to manage environment variables
+struct EnvManager {
+    original_vars: HashMap<String, Option<String>>,
+}
+
+impl EnvManager {
+    fn new() -> Self {
+        Self {
+            original_vars: HashMap::new(),
+        }
+    }
+    
+    fn set_var(&mut self, key: &str, value: &str) {
+        // Store original value if not already stored
+        if !self.original_vars.contains_key(key) {
+            self.original_vars.insert(key.to_string(), env::var(key).ok());
+        }
+        env::set_var(key, value);
+    }
+    
+    fn remove_var(&mut self, key: &str) {
+        // Store original value if not already stored
+        if !self.original_vars.contains_key(key) {
+            self.original_vars.insert(key.to_string(), env::var(key).ok());
+        }
+        env::remove_var(key);
+    }
+}
+
+impl Drop for EnvManager {
+    fn drop(&mut self) {
+        // Restore original environment variables
+        for (key, original_value) in &self.original_vars {
+            match original_value {
+                Some(value) => env::set_var(key, value),
+                None => env::remove_var(key),
+            }
+        }
+    }
+}
+
+#[test]
+fn test_config_with_all_variables() {
+    let mut env_manager = EnvManager::new();
+    
+    env_manager.set_var("DATABASE_URL", "postgres://localhost/test");
+    env_manager.set_var("PORT", "8080");
+    env_manager.set_var("DEBUG", "true");
+    env_manager.set_var("API_KEY", "secret123");
+    
+    let config = AppConfig::from_env().unwrap();
+    
+    assert_eq!(config.database_url, "postgres://localhost/test");
+    assert_eq!(config.port, 8080);
+    assert_eq!(config.debug_mode, true);
+    assert_eq!(config.api_key, Some("secret123".to_string()));
+    
+    // EnvManager will restore original values when dropped
+}
+
+#[test]
+fn test_config_with_defaults() {
+    let mut env_manager = EnvManager::new();
+    
+    env_manager.set_var("DATABASE_URL", "postgres://localhost/test");
+    env_manager.remove_var("PORT");
+    env_manager.remove_var("DEBUG");
+    env_manager.remove_var("API_KEY");
+    
+    let config = AppConfig::from_env().unwrap();
+    
+    assert_eq!(config.database_url, "postgres://localhost/test");
+    assert_eq!(config.port, 3000); // Default value
+    assert_eq!(config.debug_mode, false); // Default value
+    assert_eq!(config.api_key, None); // Optional variable
+}
+
+#[test]
+fn test_config_missing_required_variable() {
+    let mut env_manager = EnvManager::new();
+    
+    env_manager.remove_var("DATABASE_URL");
+    
+    let result = AppConfig::from_env();
+    assert!(result.is_err());
+    assert!(result.unwrap_err().contains("DATABASE_URL"));
+}
+
+#[test]
+fn test_config_invalid_port() {
+    let mut env_manager = EnvManager::new();
+    
+    env_manager.set_var("DATABASE_URL", "postgres://localhost/test");
+    env_manager.set_var("PORT", "invalid");
+    
+    let result = AppConfig::from_env();
+    assert!(result.is_err());
+    assert!(result.unwrap_err().contains("PORT must be a valid number"));
+}
+
+#[test]
+fn test_config_boolean_parsing() {
+    let mut env_manager = EnvManager::new();
+    
+    env_manager.set_var("DATABASE_URL", "postgres://localhost/test");
+    
+    // Test various boolean representations
+    for debug_value in &["true", "false", "1", "0", "yes", "no"] {
+        env_manager.set_var("DEBUG", debug_value);
+        let config = AppConfig::from_env().unwrap();
+        
+        // Only "true" should parse as true
+        let expected = debug_value == "true";
+        assert_eq!(config.debug_mode, expected,
+                  "DEBUG={} should parse as {}", debug_value, expected);
+    }
+}
+
+fn main() {
+    println!("Testing with environment variables");
+}
+```
+
+Use environment variable managers to ensure test isolation and proper  
+cleanup. Test both positive and negative cases, including missing variables,  
+invalid values, and different valid representations.  
+
+## Testing serialization and deserialization
+
+Testing serialization and deserialization ensures data integrity across  
+different formats and verifies round-trip conversion reliability.  
+
+```rust
+use std::collections::HashMap;
+
+// Simple JSON-like serialization for demonstration
+trait Serializable {
+    fn serialize(&self) -> String;
+    fn deserialize(data: &str) -> Result<Self, String> where Self: Sized;
+}
+
+#[derive(Debug, PartialEq, Clone)]
+struct Person {
+    name: String,
+    age: u32,
+    email: String,
+    active: bool,
+}
+
+impl Person {
+    fn new(name: String, age: u32, email: String, active: bool) -> Self {
+        Self { name, age, email, active }
+    }
+}
+
+impl Serializable for Person {
+    fn serialize(&self) -> String {
+        format!("name:{},age:{},email:{},active:{}", 
+               self.name, self.age, self.email, self.active)
+    }
+    
+    fn deserialize(data: &str) -> Result<Self, String> {
+        let mut fields = HashMap::new();
+        
+        for part in data.split(',') {
+            let kv: Vec<&str> = part.split(':').collect();
+            if kv.len() != 2 {
+                return Err(format!("Invalid format: {}", part));
+            }
+            fields.insert(kv[0], kv[1]);
+        }
+        
+        let name = fields.get("name")
+            .ok_or("Missing name field")?
+            .to_string();
+        
+        let age = fields.get("age")
+            .ok_or("Missing age field")?
+            .parse::<u32>()
+            .map_err(|_| "Invalid age format")?;
+        
+        let email = fields.get("email")
+            .ok_or("Missing email field")?
+            .to_string();
+        
+        let active = fields.get("active")
+            .ok_or("Missing active field")?
+            .parse::<bool>()
+            .map_err(|_| "Invalid active format")?;
+        
+        Ok(Person::new(name, age, email, active))
+    }
+}
+
+#[derive(Debug, PartialEq)]
+struct Company {
+    name: String,
+    employees: Vec<Person>,
+    founded: u32,
+}
+
+impl Serializable for Company {
+    fn serialize(&self) -> String {
+        let employees_str: Vec<String> = self.employees
+            .iter()
+            .map(|e| format!("[{}]", e.serialize()))
+            .collect();
+        
+        format!("company_name:{},founded:{},employees:{}",
+               self.name, self.founded, employees_str.join("|"))
+    }
+    
+    fn deserialize(data: &str) -> Result<Self, String> {
+        let parts: Vec<&str> = data.split(",employees:").collect();
+        if parts.len() != 2 {
+            return Err("Invalid company format".to_string());
+        }
+        
+        let header_parts: Vec<&str> = parts[0].split(',').collect();
+        let mut name = None;
+        let mut founded = None;
+        
+        for part in header_parts {
+            let kv: Vec<&str> = part.split(':').collect();
+            if kv.len() == 2 {
+                match kv[0] {
+                    "company_name" => name = Some(kv[1].to_string()),
+                    "founded" => founded = Some(kv[1].parse::<u32>()
+                        .map_err(|_| "Invalid founded year")?),
+                    _ => {}
+                }
+            }
+        }
+        
+        let name = name.ok_or("Missing company name")?;
+        let founded = founded.ok_or("Missing founded year")?;
+        
+        let mut employees = Vec::new();
+        if !parts[1].is_empty() {
+            for emp_str in parts[1].split('|') {
+                if emp_str.starts_with('[') && emp_str.ends_with(']') {
+                    let emp_data = &emp_str[1..emp_str.len()-1];
+                    employees.push(Person::deserialize(emp_data)?);
+                }
+            }
+        }
+        
+        Ok(Company { name, employees, founded })
+    }
+}
+
+#[test]
+fn test_person_serialization_round_trip() {
+    let original = Person::new(
+        "Alice Johnson".to_string(),
+        30,
+        "alice@example.com".to_string(),
+        true
+    );
+    
+    let serialized = original.serialize();
+    let deserialized = Person::deserialize(&serialized).unwrap();
+    
+    assert_eq!(original, deserialized);
+}
+
+#[test]
+fn test_person_serialization_format() {
+    let person = Person::new(
+        "Bob".to_string(),
+        25,
+        "bob@test.com".to_string(),
+        false
+    );
+    
+    let serialized = person.serialize();
+    assert_eq!(serialized, "name:Bob,age:25,email:bob@test.com,active:false");
+}
+
+#[test]
+fn test_person_deserialization_errors() {
+    // Test invalid format
+    let result = Person::deserialize("invalid");
+    assert!(result.is_err());
+    
+    // Test missing fields
+    let result = Person::deserialize("name:Alice,age:30");
+    assert!(result.is_err());
+    
+    // Test invalid age
+    let result = Person::deserialize("name:Alice,age:invalid,email:test,active:true");
+    assert!(result.is_err());
+}
+
+#[test]
+fn test_company_serialization_round_trip() {
+    let employees = vec![
+        Person::new("Alice".to_string(), 30, "alice@example.com".to_string(), true),
+        Person::new("Bob".to_string(), 25, "bob@example.com".to_string(), false),
+    ];
+    
+    let original = Company {
+        name: "Tech Corp".to_string(),
+        employees,
+        founded: 2020,
+    };
+    
+    let serialized = original.serialize();
+    let deserialized = Company::deserialize(&serialized).unwrap();
+    
+    assert_eq!(original, deserialized);
+}
+
+#[test]
+fn test_empty_company_serialization() {
+    let company = Company {
+        name: "Empty Corp".to_string(),
+        employees: vec![],
+        founded: 2023,
+    };
+    
+    let serialized = company.serialize();
+    let deserialized = Company::deserialize(&serialized).unwrap();
+    
+    assert_eq!(company, deserialized);
+}
+
+#[test]
+fn test_serialization_with_special_characters() {
+    // Test edge cases with special characters
+    let person = Person::new(
+        "O'Connor".to_string(),
+        35,
+        "test@co.uk".to_string(),
+        true
+    );
+    
+    let serialized = person.serialize();
+    let deserialized = Person::deserialize(&serialized).unwrap();
+    
+    assert_eq!(person, deserialized);
+}
+
+fn main() {
+    println!("Testing serialization and deserialization");
+}
+```
+
+Test serialization by verifying round-trip conversion, testing edge cases  
+with special characters, validating error handling for malformed data, and  
+ensuring format consistency across different data structures.  
