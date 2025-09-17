@@ -8,16 +8,19 @@ Simple conditions with `if`, `else if` and `else` keywords.
 use rand::Rng;
 
 fn main() {
-    let mut rng = rand::thread_rng();
-    let n = rng.gen_range(-5..5);
 
-    if n < 0 {
-        println!("negative value");
+    let mut rng = rand::rng();
+    let n = rng.random_range(-5..5);
+
+    let msg = if n < 0 {
+        "negative value"
     } else if n == 0 {
-        println!("zero");
+        "zero"
     } else {
-        println!("positive value");
-    }
+        "positive value"
+    };
+
+    println!("{}", msg);
 }
 ```
 
