@@ -776,6 +776,9 @@ fn main() -> std::io::Result<()> {
     // Cleanup
     std::fs::remove_file(file_path)?;
     
+    Ok(())
+}
+```
 
 ### File locking
 
@@ -1170,6 +1173,9 @@ fn main() -> std::io::Result<()> {
 
 ## Changing File Permissions
 
+Modifying file access permissions on Unix-like systems. File permissions  
+control read, write, and execute access for owner, group, and others.
+
 ```rust
 use std::fs;
 use std::os::unix::fs::PermissionsExt;
@@ -1183,6 +1189,11 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+
+The octal notation 0o644 sets read-write for owner and read-only for  
+group and others. Permission modification requires appropriate system  
+privileges. This functionality is Unix-specific and won't work on  
+Windows systems.
 
 *Note: The permissions example is for Unix-like systems.*
 
