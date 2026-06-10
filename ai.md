@@ -5,8 +5,11 @@
 ## Simple chat with genai
 
 ```rust
-use genai::chat::ChatRequest;
 use genai::Client;
+use genai::chat::ChatRequest;
+
+
+const MODEL:&str = "deepseek-v4-flash";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,32 +24,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request = ChatRequest::from_user(prompt);
 
     // Send the request to DeepSeek AI
-    let response = client.exec_chat("deepseek-chat", request, None).await?;
+    let response = client.exec_chat(MODEL, request, None).await?;
 
-    response.content.map_or_else(
-    || println!("No content in response"),
-    |content| {
-        println!("Response: {:?}", content);
-        match content.text_into_string() {
-            Some(resp) => println!("{}", resp),
-            None => println!("Failed to convert content to string"),
-        }
-    },
-);
-
-    // Print the response content
-    // if let Some(content) = response.content {
-    //     println!("Response: {:?}", content);
-
-    //     if let Some(resp) = content.text_into_string() {
-    //         println!("{}", resp);
-    //     } else {
-    //         println!("Failed to convert content to string");
-    //     }   
-
-    // } else {
-    //     println!("No content in response");
-    // }
+    match response.into_first_text() {
+        Some(text) => println!("{}", text),
+        None => println!("No text content in response"),
+    }
 
     Ok(())
 }
