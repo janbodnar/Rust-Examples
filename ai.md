@@ -74,6 +74,9 @@ struct Choice {
     message: Message,
 }
 
+const DEEPSEEK_API_URL: &str = "https://api.deepseek.com/v1/chat/completions";
+const DEEPSEEK_MODEL: &str = "deepseek-v4-flash";
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Args::parse();
@@ -82,7 +85,7 @@ async fn main() -> Result<()> {
         .context("DEEPSEEK_API_KEY environment variable not set")?;
 
     let request = ChatRequest {
-        model: "deepseek-chat".to_string(),
+        model: DEEPSEEK_MODEL.to_string(),
         messages: vec![Message {
             role: "user".to_string(),
             content: args.prompt,
@@ -91,7 +94,7 @@ async fn main() -> Result<()> {
 
     let client = Client::new();
     let response = client
-        .post("https://api.deepseek.com/v1/chat/completions")
+        .post(DEEPSEEK_API_URL)
         .bearer_auth(api_key)
         .json(&request)
         .send()
