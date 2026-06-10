@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-## Simple chat with API
+## Simple chat with REST API
 
 ```rust
 use anyhow::{Context, Result};
