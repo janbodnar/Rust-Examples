@@ -299,6 +299,9 @@ struct Choice {
     message: Message,
 }
 
+const DEEPSEEK_API_URL: &str = "https://api.deepseek.com/v1/chat/completions";
+const MODEL_NAME: &str = "deepseek-v4-flash";
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let api_key = env::var("DEEPSEEK_API_KEY")
@@ -315,12 +318,12 @@ async fn main() -> Result<()> {
 
     // First turn
     let first_request = ChatRequest {
-        model: "deepseek-chat".to_string(),
+        model: MODEL_NAME.to_string(),
         messages: messages.clone(),
     };
 
     let response = client
-        .post("https://api.deepseek.com/v1/chat/completions")
+        .post(DEEPSEEK_API_URL)
         .bearer_auth(&api_key)
         .json(&first_request)
         .send()
@@ -361,12 +364,12 @@ async fn main() -> Result<()> {
     });
 
     let second_request = ChatRequest {
-        model: "deepseek-chat".to_string(),
+        model: MODEL_NAME.to_string(),
         messages: messages.clone(),
     };
 
     let second_response = client
-        .post("https://api.deepseek.com/v1/chat/completions")
+        .post(DEEPSEEK_API_URL)
         .bearer_auth(&api_key)
         .json(&second_request)
         .send()
