@@ -37,6 +37,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Simple chat with REST API
 
+```
+cargo add serde --features derive && cargo add reqwest --features json && cargo add tokio --features macros,rt-multi-thread
+```
+
 ```rust
 use anyhow::{Context, Result};
 use clap::Parser;
