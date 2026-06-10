@@ -126,6 +126,10 @@ async fn main() -> Result<()> {
 }
 ```
 
+```
+$ cargo run -q --  --prompt 'What is FreeBSD in a paragraph'
+```
+
 ## Toll call with API
 
 ```rust
